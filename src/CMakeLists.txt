@@ -1,15 +1,15 @@
 
-find_package(Poco REQUIRED COMPONENTS Foundation Util Net XML JSON)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 
 include_directories(
     ${MY_SRC_INCLUDE}  
     ${Poco_INCLUDE_DIRS} 
-)  
+)
 
-MESSAGE( [Main] " Poco_LIBRARIES = ${Poco_LIBRARIES}")
+message([Main] " Poco_LIBRARIES = ${Poco_LIBRARIES}")
 
 
-link_directories( PUBLIC ${CMAKE_BINARY_DIR}) 
+link_directories(PUBLIC ${CMAKE_BINARY_DIR}) 
 
 add_subdirectory(server)
 
