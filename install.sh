@@ -1,7 +1,5 @@
 #!/bin/sh
-
-mkdir ./build ; cd ./build
-conan install ..
-cd ..
 cmake .
+cd ./build
+cd ..
 make
