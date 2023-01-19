@@ -6,7 +6,9 @@
 #include <Poco/Net/ServerSocketImpl.h>
 #include "Poco/MD5Engine.h"
 #include "Poco/DigestStream.h"
+#include "Poco/Util/Application.h"
 
+using namespace Poco::Util;
 
 namespace
 {
@@ -48,9 +50,10 @@ int Server::main(const std::vector<std::string>& args)
 	server.start();
 	logger().information("HTTP Server started on port 8080.");
 	waitForTerminationRequest();
+	logger().information("Closing server...");
+	server.stop();
 	server.stopAll();
-
-	return 0;
+	return Application::EXIT_OK;
 }
 
 
