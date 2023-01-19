@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
  
-enable_language(C)
-enable_language(CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -11,23 +9,18 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 project(SmartHouse VERSION 0.1.0)
 
-add_subdirectory("src")
+add_definitions("-std=c++17")
 
-if(MSVC) # WIN32
-    SET(Poco_INCLUDE_DIRS "C:/Program Files/Poco/include")
-else()
-    SET(Poco_INCLUDE_DIRS "/usr/local/include/Poco")
-endif(MSVC)
+include(${CMAKE_SOURCE_DIR}/build/conanbuildinfo.cmake)
+conan_basic_setup()
 
-MESSAGE( [Main] " Poco_INCLUDE_DIRS = ${Poco_INCLUDE_DIRS}")
-MESSAGE( [Main] " Poco_LIBRARIES = ${Poco_LIBRARIES}")
+enable_language(CXX)
 
-include_directories(
-    ${MY_SRC_INCLUDE}  
-    ${Poco_INCLUDE_DIRS}
+set(CMAKE_CXX_COMPILER g++)
+set (CMAKE_CXX_STANDARD 17)
 
-) 
+add_subdirectory(src)
 
-link_directories(${CMAKE_BINARY_DIR}) 
+
 
 
