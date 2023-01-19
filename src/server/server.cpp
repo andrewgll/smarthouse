@@ -42,11 +42,11 @@ int Server::main(const std::vector<std::string>& args)
 	parameters->setMaxQueued(100);
 	parameters->setMaxThreads(4);
 
-	const Poco::Net::ServerSocket socket(Socket("localhost:5849"));
+	const Poco::Net::ServerSocket socket(Socket("localhost:8080"));
 
 	Poco::Net::HTTPServer server(new handlers::Factory(), socket, parameters);
-
 	server.start();
+	logger().information("HTTP Server started on port 8080.");
 	waitForTerminationRequest();
 	server.stopAll();
 
