@@ -1,5 +1,5 @@
 [requires]
-poco/1.12.4
+poco/1.12.3
 
 [generators]
 cmake
