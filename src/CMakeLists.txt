@@ -15,4 +15,7 @@ add_subdirectory(server)
 
 add_executable(SmartHouse main.cpp)
 
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/server/include")
+
 target_link_libraries(SmartHouse ${CONAN_LIBS} Server)

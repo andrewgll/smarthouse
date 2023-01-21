@@ -1,5 +1,5 @@
 #include "server.h"
-#include "handlers/Factory.h"
+#include "Factory.h"
 
 #include <iostream>
 #include <Poco/Net/HTTPServer.h>
@@ -44,11 +44,11 @@ int Server::main(const std::vector<std::string>& args)
 	parameters->setMaxQueued(100);
 	parameters->setMaxThreads(4);
 
-	const Poco::Net::ServerSocket socket(Socket("localhost:8080"));
+	const Poco::Net::ServerSocket socket(Socket("localhost:5575"));
 
 	Poco::Net::HTTPServer server(new handlers::Factory(), socket, parameters);
 	server.start();
-	logger().information("HTTP Server started on port 8080.");
+	logger().information("HTTP Server started on port 5575.");
 	waitForTerminationRequest();
 	logger().information("Closing server...");
 	server.stop();

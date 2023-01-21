@@ -2,15 +2,12 @@
     "configurations": [
         {
             "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**"
-            ],
+            "includePath": ["${workspaceFolder}/**", "~/.conan/data/**"],
             "defines": [],
-            "compilerPath": "/usr/bin/clang-9",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4

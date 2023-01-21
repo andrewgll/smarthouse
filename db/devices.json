@@ -1,0 +1,17 @@
+[
+ {
+    "id": "1",
+    "name":"Floor Lamp",
+    "device-type": "light"
+ },
+ {
+    "id": "2",
+    "name":"Samsung Smart TV",
+    "device-type": "media"
+ },
+ {
+    "id": "3",
+    "name":"Water Sensor",
+    "device-type": "sensor"
+ }            
+]

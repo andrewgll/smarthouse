@@ -1,6 +1,5 @@
-add_library(Factory Factory.cpp)
-add_library(Ping Ping.cpp)
+add_library(Handlers Ping.cpp Devices.cpp)
+target_link_libraries(Handlers  ${CONAN_LIBS})
 
-target_link_libraries(Factory  ${CONAN_LIBS})
-target_link_libraries(Ping  ${CONAN_LIBS})
-target_link_libraries(Factory Ping)
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")

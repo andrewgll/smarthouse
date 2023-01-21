@@ -1,6 +1,6 @@
+#include <Poco/Net/HTTPRequestHandler.h>
 #ifndef SMARTHOUSE_HANDLER_PING_H_
 #define SMARTHOUSE_HANDLER_PING_H_
-#include <Poco/Net/HTTPRequestHandler.h>
 
 namespace handlers
 {
