@@ -1,20 +1,26 @@
-#include "Interface/Recource/Factory/Factory.h"
+#include "Interface/Resource/Factory/Factory.h"
+#include "Interface/Resource/Factory/DeviceFactory.h"
 
-namespace Interface {
-namespace Resource {
-namespace Factory {
-
-
-    IFactory * Factory::createResourceFactory(std::string & index)
+namespace Interface
+{
+    namespace Resource
     {
-        //TODO: find better way to register routes
+        namespace Factory
+        {
 
-        IFactory * factory = nullptr;
-    
+            AbstractFactory *Factory::createResourceFactory(std::string &index)
+            {
+                // TODO: find better way to register routes
 
-        return factory;
+                AbstractFactory *factory = nullptr;
+                if (index == "Device")
+                {
+                    factory = new DeviceFactory();
+                }
 
+                return factory;
+            }
+
+        }
     }
-
-
-} } }
+}

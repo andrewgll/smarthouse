@@ -1,10 +1,10 @@
 
-
-#ifndef SmartHouse_Interface_Resource_Factory_Included
-#define SmartHouse_Interface_Resource_Factory_Included
+#ifndef Web_Service_Interface_Resource_Factory_INCLUDED
+#define Web_Service_Interface_Resource_Factory_INCLUDED
 
 #include <string>
-#include "IFactory.h"
+#include "AbstractFactory.h"
+
 namespace Interface
 {
     namespace Resource
@@ -12,16 +12,15 @@ namespace Interface
         namespace Factory
         {
 
-            class IFactory;
+            class AbstractFactory;
             class Factory
             {
             public:
-                static IFactory *createResourceFactory(std::string &);
+                static AbstractFactory *createResourceFactory(std::string &);
 
             private:
                 Factory(){};
             };
-       
 
         }
     }

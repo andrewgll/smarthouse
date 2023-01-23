@@ -10,6 +10,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 #TODO  add -Werror (ofc...)
+#You can specify your type of build --config Debug
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11  -Wextra -Wall -Wpedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
         -O -g -rdynamic -Wshadow -Wunused-parameter -Wunused-variable -Wdelete-non-virtual-dtor -Wfatal-errors \
@@ -18,8 +19,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -w -Wl,--discard-all
 
 SET(CMAKE_SHARED_LIBRARY_PREFIX "")
 
-SET(SMARTHOUSE_CLI  "webservice")
-SET(SMARTHOUSE_BINARY "poco_restful_webservice")
+SET(SMARTHOUSE_CLI  "SmartHouseServerCLI")
+SET(SMARTHOUSE_BINARY "SmartHouseServerBinary")
 
 # application's directories settings
 set(SMARTHOUSE_HOSTING_DIRECTORY_NAME poco_webservice)
