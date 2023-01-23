@@ -1,7 +1,14 @@
 
+#include "Interface/Container.h"
+#include "Interface/Router.h"
 
-#include "server.h"
+int main (int argc, char * argv[]) {
 
-#include <iostream>
+    Interface::Container container;
 
-POCO_SERVER_MAIN(Server)
+    container.setPort(9090);
+    container.setRouter(new Interface::Router());
+    //Run application with Router as Request Handler Factory
+    return container.run(argc, argv);
+
+}
