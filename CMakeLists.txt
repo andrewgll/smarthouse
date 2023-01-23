@@ -7,8 +7,9 @@ set(CMAKE_CXX_COMPILER /usr/bin/g++)
 
 # It sets default to Release build type
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
+    set(CMAKE_BUILD_TYPE Release)
 endif()
+if(UNIX)
 #TODO  add -Werror (ofc...)
 #You can specify your type of build --config Debug
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11  -Wextra -Wall -Wpedantic")
@@ -16,11 +17,12 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
         -O -g -rdynamic -Wshadow -Wunused-parameter -Wunused-variable -Wdelete-non-virtual-dtor -Wfatal-errors \
         -Woverloaded-virtual -Wunreachable-code -Wno-unused -Wundef -Wl,--no-undefined -Wl,--no-allow-shlib-undefined")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -w -Wl,--discard-all")
+endif(UNIX)
 
 SET(CMAKE_SHARED_LIBRARY_PREFIX "")
 
-SET(SMARTHOUSE_CLI  "SmartHouseServerCLI")
-SET(SMARTHOUSE_BINARY "SmartHouseServerBinary")
+SET(SMARTHOUSE_CLI  SmartHouseServerCLI)
+SET(SMARTHOUSE_BINARY SmartHouseServerBinary)
 
 # application's directories settings
 set(SMARTHOUSE_HOSTING_DIRECTORY_NAME poco_webservice)
@@ -39,8 +41,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/bin)
 
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/*.cpp)
 
-include_directories("${PROJECT_INCLUDE_DIR}")
-include_directories("${PROJECT_SOURCE_DIR}")
+include_directories(${PROJECT_INCLUDE_DIR})
+include_directories(${PROJECT_SOURCE_DIR})
 
 add_library(${SMARTHOUSE_BINARY}  ${SOURCE_FILES})
 target_include_directories(${SMARTHOUSE_BINARY} PUBLIC ${PROJECT_INCLUDE_DIR})
