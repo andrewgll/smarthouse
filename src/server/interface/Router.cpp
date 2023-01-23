@@ -2,8 +2,9 @@
 #include "Poco/ClassLibrary.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include <Poco/URI.h>
-#include "Interface/Recource/ResourceNotFound.h"
-#include "Interface/Recource/Factory/Factory.h"
+#include "Interface/Resource/ResourceNotFound.h"
+#include "Interface/Resource/Factory/DeviceFactory.h"
+#include "Interface/Resource/Factory/Factory.h"
 
 using namespace Poco;
 namespace Interface
@@ -17,9 +18,7 @@ namespace Interface
     void Router::init()
     {
         // Register new routes here and corresponding handlers for them
-        addRoute("/polls", "Interface::Resource::Factory::PollFactory");
-        addRoute("/polls/votes", "Interface::Resource::Factory::PollVoteFactory");
-        addRoute("/", "Interface::Resource::Factory::ApplicationFactory");
+        addRoute("/device", "Device");
     }
 
     Poco::Net::HTTPRequestHandler *Router::createRequestHandler(const Poco::Net::HTTPServerRequest &request)
@@ -41,9 +40,9 @@ namespace Interface
         }
 
         // create corresponding handler for uri
-        // factoryIndex->second is uri eg. /device
-        Interface::Resource::Factory::IFactory *factory =
+         Interface::Resource::Factory::AbstractFactory * factory =
             Interface::Resource::Factory::Factory::createResourceFactory(factoryIndex->second);
+
         return factory->createResource();
     }
 
