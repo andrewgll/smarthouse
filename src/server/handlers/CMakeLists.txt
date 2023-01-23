@@ -1,4 +1,4 @@
-add_library(Handlers Ping.cpp Devices.cpp)
+add_library(Handlers Ping.cpp Devices.cpp Device.cpp)
 target_link_libraries(Handlers  ${CONAN_LIBS})
 
 

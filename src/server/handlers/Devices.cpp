@@ -18,9 +18,10 @@ using namespace Poco::Util;
 
 namespace handlers
 {
-void GetDevices(Poco::Net::HTTPServerRequest& request,
+void Devices::GetDevices(Poco::Net::HTTPServerRequest& request,
 	Poco::Net::HTTPServerResponse& response){
      Path path = Path();
+    //TODO: create db
 	char pathSeparator = Poco::Path::pathSeparator();
     if(pathSeparator == '\\'){
         path.assign("db\\devices.json");
@@ -46,7 +47,7 @@ void Devices::handleRequest (
         GetDevices(request, response);
     }
     else if(request.getMethod() == "POST"){
-        
+
     }
 }
 
