@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.7)
 
 project(SmartHouse)
 
-
 # It sets default to Release build type
 if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE Release)
@@ -19,10 +18,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -w -Wl,--discard-all")
 endif(UNIX)
 
-SET(CMAKE_SHARED_LIBRARY_PREFIX "")
-
 SET(SMARTHOUSE_CLI  SmartHouseServerCLI)
-SET(SMARTHOUSE_BINARY SmartHouseServerBinary)
 
 # application's directories settings
 set(SMARTHOUSE_HOSTING_DIRECTORY_NAME poco_webservice)
@@ -44,11 +40,9 @@ file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/*.cpp)
 include_directories(${PROJECT_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR})
 
-
 #Conan setup
 include(${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/conanbuildinfo.cmake)
 conan_basic_setup()
-
 
 # Handling options
 option(ENABLE_TESTS
@@ -69,7 +63,6 @@ endif ()
 
 if (ENABLE_TESTS)
     add_subdirectory(tests)
-
     message(STATUS "Building with tests")
 elseif ()
     message(STATUS "Building without tests")
@@ -85,6 +78,4 @@ install(TARGETS ${SMARTHOUSE_CLI} DESTINATION ${SMARTHOUSE_LIBRARY_DIRECTORY})
 message([Main] "Conan Libs: ${CONAN_LIBS}")
 message([Main] "Project Source dir: ${PROJECT_SOURCE_DIR}")
 message([Main] "Project Include dir: ${PROJECT_INCLUDE_DIR}")
-message([Main] "Project Include dir: ${SOURCE_FILES}")
-
-
+message([Main] "Project Source files: ${SOURCE_FILES}")
