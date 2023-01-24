@@ -13,7 +13,7 @@ namespace Interface
                 // TODO: find better way to register routes
 
                 AbstractFactory *factory = nullptr;
-                if (index == "Device")
+                if (index == "device")
                 {
                     factory = new DeviceFactory();
                 }

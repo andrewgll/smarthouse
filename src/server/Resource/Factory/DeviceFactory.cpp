@@ -9,6 +9,7 @@ namespace Interface
         {
             Poco::Net::HTTPRequestHandler *DeviceFactory::createResource()
             {
+                
                 return new DeviceResource();
             }
         }

@@ -18,9 +18,8 @@ namespace Interface
     void Router::init()
     {
         // Register new routes here and corresponding handlers for them
-        addRoute("/device", "Device");
+        addRoute("/device", "device");
     }
-
     Poco::Net::HTTPRequestHandler *Router::createRequestHandler(const Poco::Net::HTTPServerRequest &request)
     {
         return getResource(request.getURI());
