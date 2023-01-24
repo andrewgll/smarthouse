@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.7)
 
 project(SmartHouse)
 
-
 # It sets default to Release build type
 if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE Release)
@@ -40,7 +39,6 @@ file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/*.cpp)
 
 include_directories(${PROJECT_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR})
-
 
 #Conan setup
 include(${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/conanbuildinfo.cmake)
@@ -81,5 +79,3 @@ message([Main] "Conan Libs: ${CONAN_LIBS}")
 message([Main] "Project Source dir: ${PROJECT_SOURCE_DIR}")
 message([Main] "Project Include dir: ${PROJECT_INCLUDE_DIR}")
 message([Main] "Project Source files: ${SOURCE_FILES}")
-
-
