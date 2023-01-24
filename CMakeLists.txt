@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.7)
 
 project(SmartHouse)
 
-set(CMAKE_C_COMPILER /usr/bin/gcc)
-set(CMAKE_CXX_COMPILER /usr/bin/g++)
 
 # It sets default to Release build type
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Release)
 endif()
 if(UNIX)
+set(CMAKE_C_COMPILER /usr/bin/gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/g++)
 #TODO  add -Werror (ofc...)
 #You can specify your type of build --config Debug
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11  -Wextra -Wall -Wpedantic")
@@ -44,14 +44,11 @@ file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/*.cpp)
 include_directories(${PROJECT_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR})
 
-add_library(${SMARTHOUSE_BINARY}  ${SOURCE_FILES})
-target_include_directories(${SMARTHOUSE_BINARY} PUBLIC ${PROJECT_INCLUDE_DIR})
 
 #Conan setup
 include(${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-target_link_libraries(${SMARTHOUSE_BINARY} ${CONAN_LIBS})
 
 # Handling options
 option(ENABLE_TESTS
@@ -61,8 +58,9 @@ option(ENABLE_STANDALONE_SERVICE
         "Set to OFF|ON (default: ON) to control build of API as standalone service" ON)
 
 if (ENABLE_STANDALONE_SERVICE)
-    add_executable(${SMARTHOUSE_CLI} ${PROJECT_SOURCE_DIR}/main.cpp)
-    target_link_libraries(${SMARTHOUSE_CLI} ${SMARTHOUSE_BINARY})
+    add_executable(${SMARTHOUSE_CLI} ${SOURCE_FILES})
+    target_include_directories(${SMARTHOUSE_CLI} PUBLIC ${PROJECT_INCLUDE_DIR})
+    target_link_libraries(${SMARTHOUSE_CLI} ${CONAN_LIBS})
 
     message(STATUS "Building API with standalone service support.")
 elseif ()
@@ -82,7 +80,7 @@ endif ()
 # install (DIRECTORY "${CMAKE_HOME_DIRECTORY}/data/settings/"
 #        DESTINATION "${SMARTHOUSE_CONFIG_DIRECTORY}" FILES_MATCHING PATTERN "*.ini")
 
-install(TARGETS ${SMARTHOUSE_BINARY} DESTINATION ${SMARTHOUSE_LIBRARY_DIRECTORY})
+install(TARGETS ${SMARTHOUSE_CLI} DESTINATION ${SMARTHOUSE_LIBRARY_DIRECTORY})
 # install(TARGETS ${SMARTHOUSE_CLI} DESTINATION ${SMARTHOUSE_BINARY_DIRECTORY} OPTIONAL)
 message([Main] "Conan Libs: ${CONAN_LIBS}")
 message([Main] "Project Source dir: ${PROJECT_SOURCE_DIR}")
