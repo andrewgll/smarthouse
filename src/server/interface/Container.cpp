@@ -7,40 +7,49 @@
 
 namespace interface {
 
-Container::Container() : port(9000), endpoint("localhost") {}
+Container::Container()
+    : port_(HTTP_DEFAULT_PORT), endpoint_("localhost"), router_(nullptr) {}
 
-Container::~Container() { delete router; }
+Container::~Container() { delete router_; }
 // Here application start
 int Container::main(const std::vector<std::string>&) {
   // create logger SmartHouseLogger for future using
   Poco::Logger& logger = Poco::Logger::get("SmartHouseLogger");
   auto* httpServerParams = new Poco::Net::HTTPServerParams();
-
   httpServerParams->setMaxQueued(250);
   httpServerParams->setMaxThreads(20);
+
   // register all routes and params
-  Poco::Net::HTTPServer httpServer(getRouter(),
-                                   Poco::Net::ServerSocket(Poco::UInt16(port)),
-                                   httpServerParams);
+
+  auto router = getRouter();
+
+  if (router == nullptr) {
+    logger.fatal("No router set. Stopping server...");
+    return EXIT_CONFIG;
+  }
+
+  Poco::Net::HTTPServer httpServer(
+      router, Poco::Net::ServerSocket(Poco::UInt16(port_)), httpServerParams);
 
   logger.information(
-      "SmartHouse server is started on %s:%i\ntype CRLT+C to finish it.",
-      endpoint, port);
+      "SmartHouse server is started on %s:%hu.\nType CTRL+C to stop it.",
+      endpoint_, port_);
 
   httpServer.start();
   waitForTerminationRequest();
   httpServer.stop();
+  httpServer.stopAll();
 
   logger.information("SmartHouse server stopped.");
   return Poco::Util::Application::EXIT_OK;
 }
 // accessors to private members...
-void Container::setPort(int _port) { port = _port; }
+void Container::setPort(int _port) { port_ = _port; }
 
-void Container::setRouter(Poco::Net::HTTPRequestHandlerFactory* _router) {
-  router = _router;
+void Container::setRouter(Poco::Net::HTTPRequestHandlerFactory* router) {
+  router_ = router;
 }
 
-Poco::Net::HTTPRequestHandlerFactory* Container::getRouter() { return router; }
+Poco::Net::HTTPRequestHandlerFactory* Container::getRouter() { return router_; }
 
 }  // namespace interface

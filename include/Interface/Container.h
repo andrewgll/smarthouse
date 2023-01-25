@@ -8,6 +8,8 @@
 
 namespace interface {
 
+constexpr unsigned short HTTP_DEFAULT_PORT = 8080;
+
 class Container : public Poco::Util::ServerApplication {
  public:
   Container();
@@ -22,9 +24,9 @@ class Container : public Poco::Util::ServerApplication {
   int main(const std::vector<std::string> &args) override;
 
  private:
-  int port;
-  std::string endpoint;
-  Poco::Net::HTTPRequestHandlerFactory *router;
+  unsigned short port_;
+  std::string endpoint_;
+  Poco::Net::HTTPRequestHandlerFactory *router_;
 };
 
 }  // namespace interface
