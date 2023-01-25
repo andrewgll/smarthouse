@@ -1,14 +1,11 @@
+#include "interface/container.h"
+#include "interface/router.h"
 
-#include "Interface/Container.h"
-#include "Interface/Router.h"
+int main(int argc, char* argv[]) {
+  interface::Container container;
 
-int main (int argc, char * argv[]) {
-
-    Interface::Container container;
-
-    container.setPort(9090);
-    container.setRouter(new Interface::Router());
-    //Run application with Router as Request Handler Factory
-    return container.run(argc, argv);
-
+  container.setPort(9090);
+  container.setRouter(new interface::Router());
+  // Run application with Router as Request Handler Factory
+  return container.run(argc, argv);
 }

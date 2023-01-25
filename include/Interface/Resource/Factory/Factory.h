@@ -1,29 +1,25 @@
-
 #ifndef Web_Service_Interface_Resource_Factory_INCLUDED
 #define Web_Service_Interface_Resource_Factory_INCLUDED
 
 #include <string>
-#include "AbstractFactory.h"
 
-namespace Interface
-{
-    namespace Resource
-    {
-        namespace Factory
-        {
+#include "abstract_factory.h"
 
-            class AbstractFactory;
-            class Factory
-            {
-            public:
-                static AbstractFactory *createResourceFactory(std::string &);
+namespace interface {
+namespace resource {
+namespace factory {
 
-            private:
-                Factory(){};
-            };
+class AbstractFactory;
+class Factory {
+ public:
+  static AbstractFactory *createResourceFactory(std::string &);
 
-        }
-    }
-}
+ private:
+  Factory(){};
+};
+
+}  // namespace factory
+}  // namespace resource
+}  // namespace interface
 
 #endif
