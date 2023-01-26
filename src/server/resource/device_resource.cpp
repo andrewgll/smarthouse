@@ -9,12 +9,14 @@
 namespace interface {
 namespace resource {
 
+using namespace Poco::Net;
+
 DeviceResource::DeviceResource() : AbstractResource() {}
 
-void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
-                                Poco::Net::HTTPServerResponse &response) {}
-void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
-                                Poco::Net::HTTPServerResponse &response) {
+void DeviceResource::handle_put(HTTPServerRequest &request,
+                                HTTPServerResponse &response) {}
+void DeviceResource::handle_get(HTTPServerRequest &request,
+                                HTTPServerResponse &response) {
   Poco::Path path(Poco::Path::current());
   path.append("db").append("devices.json");
   db::DeviceDBService service(path);
@@ -23,14 +25,14 @@ void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
   response.send() << device;
 }
 
-void DeviceResource::handle_post(Poco::Net::HTTPServerRequest &request,
-                                 Poco::Net::HTTPServerResponse &response) {}
-void DeviceResource::handle_delete(Poco::Net::HTTPServerRequest &request,
-                                   Poco::Net::HTTPServerResponse &response) {}
-void DeviceResource::handle_options(Poco::Net::HTTPServerRequest &,
-                                    Poco::Net::HTTPServerResponse &response) {
+void DeviceResource::handle_post(HTTPServerRequest &request,
+                                 HTTPServerResponse &response){}
+void DeviceResource::handle_delete(HTTPServerRequest &request,
+                                   HTTPServerResponse &response) {}
+void DeviceResource::handle_options(HTTPServerRequest &,
+                                    HTTPServerResponse &response) {
   response.set("Allow", "GET, POST, PUT, OPTIONS");
-  response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+  response.setStatus(HTTPResponse::HTTP_OK);
   response.setContentType("text/plain; charset=utf-8");
   response.send();
 }

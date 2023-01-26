@@ -6,7 +6,6 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
-
 #include "server/resource/utils/exception.h"
 
 namespace interface {
