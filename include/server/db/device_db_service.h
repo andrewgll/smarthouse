@@ -15,15 +15,14 @@ class DeviceDBService {
  public:
   DeviceDBService() = default;
   DeviceDBService(Poco::Path);
-  void addDevice(const Poco::JSON::Object::Ptr );
+  void addDevice(Poco::SharedPtr<Poco::JSON::Object>);
   Poco::DynamicStruct findDevice(const std::string&);
-  void updateDevice(const std::string&, const Device&);
+  void updateDevice(Poco::SharedPtr<Poco::JSON::Object>, const std::string&);
   void deleteDevice(const std::string&);
   Poco::SharedPtr<Poco::JSON::Array> loadDB();
 
  private:
   Poco::Path path_;
-  size_t lastId_;
 };
 
 }  // namespace db

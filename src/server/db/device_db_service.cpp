@@ -25,11 +25,13 @@ Poco::SharedPtr<Poco::JSON::Array> DeviceDBService::loadDB() {
   fis.close();
   return result.extract<Poco::JSON::Array::Ptr>();
 }
-
-void DeviceDBService::addDevice(const Poco::JSON::Object::Ptr device) {
+void DeviceDBService::addDevice(Poco::JSON::Object::Ptr device) {
+  auto db = DeviceDBService::loadDB();
+  device->set("id", db->size());
+  db->add(device);
   Poco::FileOutputStream fos(path_.toString());
-  device->getValue<std::string>("name")
-  
+  Poco::JSON::Stringifier::condense(db, fos);
+  fos.close();
 }
 Poco::DynamicStruct DeviceDBService::findDevice(const std::string& id) {
   auto db = DeviceDBService::loadDB();
@@ -49,7 +51,9 @@ Poco::DynamicStruct DeviceDBService::findDevice(const std::string& id) {
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
-void updateDevice(const db::Device&);
+void DeviceDBService::updateDevice(Poco::JSON::Object::Ptr device , const std::string& id){
+ auto db = DeviceDBService::loadDB();
+}
 void deleteDevice(const std::string&);
 std::string path_;
 
