@@ -2,15 +2,20 @@
 
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
+#include "Poco/Path.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
 namespace interface {
 namespace resource {
-
+AbstractResource::AbstractResource()
+    : baseUrl(),
+      requestURI(),
+      requestHost(),
+      dbService(Poco::Path(Poco::Path::current())
+                    .append("db")
+                    .append("devices.json")) {}
 using namespace Poco::Net;
-
-AbstractResource::AbstractResource() : baseUrl(), requestURI(), requestHost() {}
 
 AbstractResource::~AbstractResource() {}
 

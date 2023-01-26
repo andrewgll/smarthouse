@@ -6,6 +6,7 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
+#include "db/device_db_service.h"
 #include "server/resource/utils/exception.h"
 
 namespace interface {
@@ -90,6 +91,9 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    * @return The exception Json API formatted.
    */
   std::string toJson(const Exception &);
+
+ protected:
+  db::DeviceDBService dbService;
 
  private:
   std::string baseUrl;
