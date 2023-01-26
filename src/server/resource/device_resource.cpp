@@ -2,6 +2,7 @@
 
 #include "Poco/Logger.h"
 #include "Poco/Path.h"
+#include "Poco/JSON/Parser.h"
 #include "server/db/device_db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
@@ -15,16 +16,21 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {}
 void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
-  Poco::Path path(Poco::Path::current());
-  path.append("db").append("devices.json");
-  db::DeviceDBService service(path);
   std::string id = getQueryParameter("id");
-  std::string device = service.findDevice(id).toString();
+  std::string device = dbService.findDevice(id).toString();
   response.send() << device;
 }
 
 void DeviceResource::handle_post(Poco::Net::HTTPServerRequest &request,
-                                 Poco::Net::HTTPServerResponse &response) {}
+                                 Poco::Net::HTTPServerResponse &response) {
+  Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
+  std::string str(std::istreambuf_iterator<char>(request.stream()), {});
+  Poco::JSON::Parser parser;
+  Poco::Dynamic::Var parseResult = parser.parse(str);
+  auto device = parseResult.extract<Poco::JSON::Object::Ptr>();
+  dbService.addDevice(device);
+  logger.information(str);
+}
 void DeviceResource::handle_delete(Poco::Net::HTTPServerRequest &request,
                                    Poco::Net::HTTPServerResponse &response) {}
 void DeviceResource::handle_options(Poco::Net::HTTPServerRequest &,

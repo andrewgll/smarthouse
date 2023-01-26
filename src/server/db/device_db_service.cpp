@@ -26,10 +26,13 @@ Poco::SharedPtr<Poco::JSON::Array> DeviceDBService::loadDB() {
   return result.extract<Poco::JSON::Array::Ptr>();
 }
 
-void DeviceDBService::addDevice(const Poco::DynamicStruct& device) {}
+void DeviceDBService::addDevice(const Poco::JSON::Object::Ptr device) {
+  Poco::FileOutputStream fos(path_.toString());
+  device->getValue<std::string>("name")
+  
+}
 Poco::DynamicStruct DeviceDBService::findDevice(const std::string& id) {
   auto db = DeviceDBService::loadDB();
-  Poco::Logger& logger = Poco::Logger::get("SmartHouseLogger");
   for (auto it = db->begin(); it != db->end(); ++it) {
     Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
     std::string objId = json->getValue<std::string>("id");

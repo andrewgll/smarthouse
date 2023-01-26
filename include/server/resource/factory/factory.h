@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include "abstract_factory.h"
 #include "server/resource/abstract_resource.h"
 
 namespace interface {
