@@ -1,6 +1,7 @@
 #include "server/resource/abstract_resource.h"
 
 #include "Poco/JSON/Parser.h"
+#include "Poco/Logger.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
@@ -38,49 +39,48 @@ void AbstractResource::handleRequest(Poco::Net::HTTPServerRequest &request,
                                      Poco::Net::HTTPServerResponse &response) {
   try {
     handleHttpHeaders(request, response);
+
+    Poco::URI uri = Poco::URI(request.getURI());
+
+    requestURI = request.getURI();
+    requestHost = request.getHost();
+    baseUrl = "http://" + requestHost + requestURI;
+    queryStringParameters = uri.getQueryParameters();
+
+    if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET) {
+      this->handle_get(request, response);
+    }
+
+    if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_PUT) {
+      this->handle_put(request, response);
+    }
+
+    if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_POST) {
+      this->handle_post(request, response);
+    }
+
+    if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_DELETE) {
+      this->handle_delete(request, response);
+    }
+
+    if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_OPTIONS) {
+      this->handle_options(request, response);
+    }
   } catch (resource::Exception &exception) {
     handleHttpStatusCode(exception.code(), response);
 
     handling::JsonErrorBuilder errorBuilder =
         handling::JsonErrorBuilder(request.getHost());
+    Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
 
     errorBuilder.sourceAt(request.getURI());
     errorBuilder.withType(exception.type());
     errorBuilder.withStatusCode(exception.code());
     errorBuilder.withDetails(exception.message());
 
-    std::ostream &errorStream = response.send();
-    errorStream << errorBuilder.build().toString();
-
-    errorStream.flush();
+    // TODO: Find out what is assertion violation
+    response.send()  << errorBuilder.build().toString();
     return;
-  }
-
-  Poco::URI uri = Poco::URI(request.getURI());
-
-  requestURI = request.getURI();
-  requestHost = request.getHost();
-  baseUrl = "http://" + requestHost + requestURI;
-  queryStringParameters = uri.getQueryParameters();
-
-  if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET) {
-    this->handle_get(request, response);
-  }
-
-  if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_PUT) {
-    this->handle_put(request, response);
-  }
-
-  if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_POST) {
-    this->handle_post(request, response);
-  }
-
-  if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_DELETE) {
-    this->handle_delete(request, response);
-  }
-
-  if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_OPTIONS) {
-    this->handle_options(request, response);
   }
 }
 
@@ -147,18 +147,7 @@ Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
   return dataObject->getObject("attributes");
 }
 
-void AbstractResource::assertPayloadAttributes(
-    const Poco::JSON::Object::Ptr &payloadObject,
-    const std::list<std::string> &attributes) {
-  for (auto const &attribute : attributes) {
-    if (!payloadObject->has(attribute)) {
-      throw resource::Exception(
-          Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
-          "One or more attributes are is missing at the payload.",
-          Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
-    }
-  }
-}
+// `
 
 void AbstractResource::handleHttpStatusCode(
     int statusCode, Poco::Net::HTTPServerResponse &response) {

@@ -15,7 +15,7 @@ class DeviceDBService {
  public:
   DeviceDBService() = default;
   DeviceDBService(Poco::Path);
-  void addDevice(const Device&);
+  void addDevice(const Poco::DynamicStruct& );
   Poco::DynamicStruct findDevice(const std::string&);
   void updateDevice(const std::string&, const Device&);
   void deleteDevice(const std::string&);

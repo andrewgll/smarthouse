@@ -15,6 +15,10 @@ class DeviceResource : public AbstractResource {
                   Poco::Net::HTTPServerResponse &) override;
   void handle_put(Poco::Net::HTTPServerRequest &,
                   Poco::Net::HTTPServerResponse &) override;
+  void handle_post(Poco::Net::HTTPServerRequest &,
+                   Poco::Net::HTTPServerResponse &) override;
+  void handle_delete(Poco::Net::HTTPServerRequest &,
+                     Poco::Net::HTTPServerResponse &) override;
   void handle_options(Poco::Net::HTTPServerRequest &,
                       Poco::Net::HTTPServerResponse &) override;
 };

@@ -61,8 +61,8 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    * @param jsonObject        Poco Json Object that contains payload data.
    * @param attributesNames   Attributes list to be validated.
    */
-  void assertPayloadAttributes(const Poco::JSON::Object::Ptr &,
-                               const std::list<std::string> &);
+  // void assertPayloadAttributes(const Poco::JSON::Object::Ptr &,
+  //                              const std::list<std::string> &);
 
   /*!
    * It sets all the HTTP Response information based on the HTTP Code.
