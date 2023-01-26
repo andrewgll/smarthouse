@@ -14,18 +14,18 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {}
 void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
+  Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
   try {
     Poco::Path path(Poco::Path::current());
     path.append("db").append("devices.json");
     db::DeviceDBService service(path);
-    service.findDevice("1");
+    std::string id = getQueryParameter("id");
+    response.send() << service.findDevice(id).toString();
   } catch (resource::Exception &exception) {
+    logger.information("handle code");
     handleHttpStatusCode(exception.code(), response);
-    std::ostream &outputStream = response.send();
-    outputStream << toJson(exception);
+    response.send() << toJson(exception);
   }
-
-  response.send() << "Device Get Responce";
 }
 
 void DeviceResource::handle_options(Poco::Net::HTTPServerRequest &,

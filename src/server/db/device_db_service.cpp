@@ -9,33 +9,48 @@
 #include "Poco/JSON/ParseHandler.h"
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
+#include "Poco/NumericString.h"
 #include "Poco/Path.h"
 #include "server/db/device.h"
 #include "server/resource/utils/exception.h"
+#include "server/resource/utils/json_builder.h"
 
 namespace db {
 
 DeviceDBService::DeviceDBService(Poco::Path path) : path_(path){};
 
-void DeviceDBService::addDevice(const Device& device) {}
-db::Device& DeviceDBService::findDevice(const std::string& id) {
-  Poco::Logger& logger = Poco::Logger::get("SmartHouseLogger");
+Poco::SharedPtr<Poco::JSON::Array> DeviceDBService::loadDB() {
   try {
-    // JSON Parser need to be implemented......
     Poco::File File(path_.toString());
     Poco::FileInputStream fis(path_.toString());
     Poco::JSON::Parser parser;
-    Poco::DynamicAny result;
-    result = parser.parse(fis);
-    auto object = result.extract<Poco::JSON::Object::Ptr>();
-    Poco::Dynamic::Var test =
-        object->get("id");  // holds { "property" : "value" }
+    Poco::Dynamic::Var result = parser.parse(fis);
+    return result.extract<Poco::JSON::Array::Ptr>();
+  } catch (...) {
+  }
+}
 
-    logger.information(test.toString());
+void DeviceDBService::addDevice(const Device& device) {}
+Poco::DynamicStruct DeviceDBService::findDevice(const std::string& id) {
+  try {
+    auto db = DeviceDBService::loadDB();
 
+    for (auto it = db->begin(); it != db->end(); ++it) {
+      Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
+      std::string objId = json->getValue<std::string>("id");
+      if (objId == id) {
+        interface::handling::JsonBuilder builder;
+        builder.withData("id", objId);
+        builder.withData("name", json->getValue<std::string>("name"));
+        builder.withData("type", json->getValue<std::string>("type"));
+        builder.withData("status", json->getValue<std::string>("status"));
+        return builder.build();
+      }
+    }
+    throw interface::resource::Exception("Not found.", "", 501);
   } catch (const std::exception& exc) {
-    // catch anything thrown within try block that derives from std::exception
-    std::cerr << exc.what();
+    throw interface::resource::Exception("DB ERROR;",
+                                         "Something went wrong... ", 501);
   }
 }
 void updateDevice(const db::Device&);
