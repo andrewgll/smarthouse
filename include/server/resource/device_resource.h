@@ -1,5 +1,5 @@
-#ifndef Smart_House_Interface_Resource_Application_INCLUDED
-#define Smart_House_Interface_Resource_Application_INCLUDED
+#ifndef SmartHouse_Interface_Resource_Application_INCLUDED
+#define SmartHouse_Interface_Resource_Application_INCLUDED
 
 #include "abstract_resource.h"
 

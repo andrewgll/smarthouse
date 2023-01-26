@@ -1,5 +1,5 @@
-#include "interface/container.h"
-#include "interface/router.h"
+#include "server/interface/container.h"
+#include "server/interface/router.h"
 
 int main(int argc, char* argv[]) {
   interface::Container container;

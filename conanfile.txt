@@ -1,8 +1,5 @@
 [requires]
 poco/1.12.3
-imgui/1.74
-glfw/3.3.8
-glew/2.2.0
 
 [generators]
 cmake

@@ -1,6 +1,5 @@
-#include "interface/resource/factory/device_factory.h"
-
-#include "interface/resource/device_resource.h"
+#include "server/resource/factory/device_factory.h"
+#include "server/resource/device_resource.h"
 
 namespace interface {
 namespace resource {

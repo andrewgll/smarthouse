@@ -1,5 +1,5 @@
-#ifndef Smart_House_Interface_Resource_Factory_Application_Factory_INCLUDED
-#define Smart_House_Interface_Resource_Factory_Application_Factory_INCLUDED
+#ifndef SmartHouse_Interface_Resource_Factory_Application_Factory_INCLUDED
+#define SmartHouse_Interface_Resource_Factory_Application_Factory_INCLUDED
 
 #include "factory.h"
 

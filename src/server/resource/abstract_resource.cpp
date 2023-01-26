@@ -1,7 +1,8 @@
-#include "interface/resource/abstract_resource.h"
+#include "server/resource/abstract_resource.h"
 
 #include "Poco/JSON/Parser.h"
-// #include "Interface/Handling/JSONAPI/JsonAPIErrorBuilder.h"
+#include "server/resource/utils/exception.h"
+#include "server/resource/utils/json_error_builder.h"
 
 namespace interface {
 namespace resource {
@@ -14,48 +15,46 @@ void AbstractResource::handleHttpHeaders(
     Poco::Net::HTTPServerRequest &request,
     Poco::Net::HTTPServerResponse &response) {
   response.setContentType("application/vnd.api+json; charset=utf-8");
-  if (request.getContentType() != "application/vnd.api+json" ||
-      request.get("Accept") != "application/vnd.api+json") {
-    // throw Resource::Exception("Unsupported Media Type",
-    //     "The only media type supported is application/vnd.api+json.", 415);
-  }
+  // if (request.getContentType() != "application/vnd.api+json" ||
+  //     request.get("Accept") != "application/vnd.api+json") {
+  //   throw resource::Exception(
+  //       "Unsupported Media Type",
+  //       "The only media type supported is application/vnd.api+json.", 415);
+  // }
 
   if (request.getMethod() != Poco::Net::HTTPRequest::HTTP_GET &&
       request.getMethod() != Poco::Net::HTTPRequest::HTTP_PUT &&
       request.getMethod() != Poco::Net::HTTPRequest::HTTP_POST &&
       request.getMethod() != Poco::Net::HTTPRequest::HTTP_DELETE &&
       request.getMethod() != Poco::Net::HTTPRequest::HTTP_OPTIONS) {
-    // throw Resource::Exception("Not Implemented",
-    //     "The request method is not supported by the server and cannot be
-    //     handled.", 501);
+    throw resource::Exception("Not Implemented",
+                              "The request method is not supported by the "
+                              "server and cannot be handled.",
+                              501);
   }
 }
 
 void AbstractResource::handleRequest(Poco::Net::HTTPServerRequest &request,
                                      Poco::Net::HTTPServerResponse &response) {
-  handleHttpHeaders(request, response);
+  try {
+    handleHttpHeaders(request, response);
+  } catch (resource::Exception &exception) {
+    handleHttpStatusCode(exception.code(), response);
 
-  // try {
-  //     handleHttpHeaders(request, response);
-  // } catch (Resource::Exception & exception) {
+    handling::JsonErrorBuilder errorBuilder =
+        handling::JsonErrorBuilder(request.getHost());
 
-  // handleHttpStatusCode(exception.code(), response);
+    errorBuilder.sourceAt(request.getURI());
+    errorBuilder.withType(exception.type());
+    errorBuilder.withStatusCode(exception.code());
+    errorBuilder.withDetails(exception.message());
 
-  // Handling::JsonAPIErrorBuilder errorBuilder =
-  // Handling::JsonAPIErrorBuilder(request.getHost());
+    std::ostream &errorStream = response.send();
+    errorStream << errorBuilder.build().toString();
 
-  // errorBuilder.sourceAt(request.getURI());
-  // errorBuilder.withType(exception.type());
-  // errorBuilder.withStatusCode(exception.code());
-  // errorBuilder.withDetails(exception.message());
-
-  // std::ostream & errorStream = response.send();
-  // errorStream << errorBuilder.build().toString();
-
-  // errorStream.flush();
-  //     return;
-
-  // }
+    errorStream.flush();
+    return;
+  }
 
   Poco::URI uri = Poco::URI(request.getURI());
 
@@ -130,22 +129,19 @@ Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
   auto jsonObject = parsingResult.extract<Poco::JSON::Object::Ptr>();
 
   if (jsonObject->isArray("data")) {
-    // throw Resource::Exception(
-    //     Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
-    //     "This payload can not be represented as a collection.",
-    //     Poco::Net::HTTPResponse::HTTP_BAD_REQUEST
-    // );
+    throw resource::Exception(
+        Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
+        "This payload can not be represented as a collection.",
+        Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
   }
 
   //
   Poco::JSON::Object::Ptr dataObject = jsonObject->getObject("data");
 
   if (!dataObject->has("attributes")) {
-    // throw Resource::Exception(
-    //     Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
-    //     "The payload has no an 'attributes' section.",
-    //     Poco::Net::HTTPResponse::HTTP_BAD_REQUEST
-    // );
+    throw resource::Exception(Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
+                              "The payload has no an 'attributes' section.",
+                              Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
   }
 
   return dataObject->getObject("attributes");
@@ -156,11 +152,10 @@ void AbstractResource::assertPayloadAttributes(
     const std::list<std::string> &attributes) {
   for (auto const &attribute : attributes) {
     if (!payloadObject->has(attribute)) {
-      // throw Resource::Exception(
-      //     Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
-      //     "One or more attributes are is missing at the payload.",
-      //     Poco::Net::HTTPResponse::HTTP_BAD_REQUEST
-      // );
+      throw resource::Exception(
+          Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
+          "One or more attributes are is missing at the payload.",
+          Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
     }
   }
 }
@@ -254,18 +249,6 @@ std::string AbstractResource::getUrl(const std::string &fragment) {
   return baseUrl + fragment;
 }
 
-// std::string AbstractResource::toJson(const Exception & exception)
-// {
-//     Handling::JsonAPIErrorBuilder errorBuilder(requestHost);
-
-//     errorBuilder.withType(exception.type());
-//     errorBuilder.sourceAt(requestURI);
-//     errorBuilder.withStatusCode(exception.code());
-//     errorBuilder.withDetails(exception.message());
-
-//     return errorBuilder.build().toString();
-// }
-
 std::string AbstractResource::getQueryParameter(
     const std::string &parameterKey) {
   auto iterator = std::find_if(
@@ -275,14 +258,21 @@ std::string AbstractResource::getQueryParameter(
       });
 
   if (iterator == queryStringParameters.end()) {
-    // throw Resource::Exception(
-    //     Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
-    //     "Attribute '" + parameterKey + "' is missing at URL.",
-    //     Poco::Net::HTTPResponse::HTTP_BAD_REQUEST
-    // );
+    throw resource::Exception(
+        Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
+        "Attribute '" + parameterKey + "' is missing at URL.",
+        Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
   }
 
   return iterator->second;
+}
+std::string AbstractResource::toJson(const Exception &exception) {
+  handling::JsonErrorBuilder errorBuilder(requestHost);
+  errorBuilder.withType(exception.type());
+  errorBuilder.sourceAt(requestURI);
+  errorBuilder.withStatusCode(exception.code());
+  errorBuilder.withDetails(exception.message());
+  return errorBuilder.build().toString();
 }
 
 }  // namespace resource

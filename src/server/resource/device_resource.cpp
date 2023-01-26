@@ -1,4 +1,9 @@
-#include "interface/resource/device_resource.h"
+#include "server/resource/device_resource.h"
+
+#include "Poco/Logger.h"
+#include "Poco/Path.h"
+#include "server/db/device_db_service.h"
+#include "server/resource/utils/exception.h"
 
 namespace interface {
 namespace resource {
@@ -6,13 +11,20 @@ namespace resource {
 DeviceResource::DeviceResource() : AbstractResource() {}
 
 void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
-                                Poco::Net::HTTPServerResponse &response) {
-  response.setContentType("application/vnd.api+json; charset=utf-8");
-  response.send() << "Device Put Responce";
-}
+                                Poco::Net::HTTPServerResponse &response) {}
 void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
-  response.setContentType("application/vnd.api+json; charset=utf-8");
+  try {
+    Poco::Path path(Poco::Path::current());
+    path.append("db").append("devices.json");
+    db::DeviceDBService service(path);
+    service.findDevice("1");
+  } catch (resource::Exception &exception) {
+    handleHttpStatusCode(exception.code(), response);
+    std::ostream &outputStream = response.send();
+    outputStream << toJson(exception);
+  }
+
   response.send() << "Device Get Responce";
 }
 

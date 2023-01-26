@@ -1,12 +1,12 @@
-#include "interface/router.h"
+#include "server/interface/router.h"
 
 #include <Poco/URI.h>
 
 #include "Poco/ClassLibrary.h"
 #include "Poco/Net/HTTPServerRequest.h"
-#include "interface/resource/factory/device_factory.h"
-#include "interface/resource/factory/factory.h"
-#include "interface/resource/resource_not_found.h"
+#include "server/resource/factory/device_factory.h"
+#include "server/resource/factory/factory.h"
+#include "server/resource/resource_not_found.h"
 
 using namespace Poco;
 namespace interface {

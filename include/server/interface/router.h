@@ -5,7 +5,7 @@
 #include <string>
 
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
-#include "resource/factory/factory.h"
+#include "server/resource/factory/factory.h"
 
 namespace interface {
 

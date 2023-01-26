@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "name": "SmartTV",
+    "type": "TV",
+    "status": "off"
+  },
+  {
+    "id": "2",
+    "name": "Lamp",
+    "type": "Light",
+    "status": "on"
+  }
+]

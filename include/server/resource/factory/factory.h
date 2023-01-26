@@ -1,5 +1,5 @@
-#ifndef Web_Service_Interface_Resource_Factory_INCLUDED
-#define Web_Service_Interface_Resource_Factory_INCLUDED
+#ifndef SmartHouse_Interface_Resource_Factory_INCLUDED
+#define SmartHouse_Interface_Resource_Factory_INCLUDED
 
 #include <string>
 

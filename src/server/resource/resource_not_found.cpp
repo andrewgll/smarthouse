@@ -1,4 +1,4 @@
-#include "interface/resource/resource_not_found.h"
+#include "server/resource/resource_not_found.h"
 
 namespace interface {
 namespace resource {

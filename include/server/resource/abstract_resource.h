@@ -1,11 +1,13 @@
-#ifndef Smart_House_Interface_Resource_Abstract_Resource_INCLUDED
-#define Smart_House_Interface_Resource_Abstract_Resource_INCLUDED
+#ifndef SmartHouse_Interface_Resource_Abstract_Resource_INCLUDED
+#define SmartHouse_Interface_Resource_Abstract_Resource_INCLUDED
 
 #include "Poco/JSON/Object.h"
 #include "Poco/Net/HTTPRequestHandler.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
+
+#include "server/resource/utils/exception.h"
 
 namespace interface {
 namespace resource {
@@ -81,6 +83,14 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    * @return The parameter value.
    */
   std::string getQueryParameter(const std::string &);
+
+  /*!
+   * It converts an exception to Json API format.
+   *
+   * @param exception The exception thrown.
+   * @return The exception Json API formatted.
+   */
+  std::string toJson(const Exception &);
 
  private:
   std::string baseUrl;
