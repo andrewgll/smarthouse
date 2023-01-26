@@ -1,14 +1,1 @@
-[
-  {
-    "id": 1,
-    "name": "SmartTV",
-    "type": "TV",
-    "status": "off"
-  },
-  {
-    "id": 2,
-    "name": "Lamp",
-    "type": "Light",
-    "status": "on"
-  }
-]
+[{"id":0,"name":"SmartTV","status":"off","type":"TV"},{"id":1,"name":"Lamp","status":"on","type":"Light"},{"id":2,"name":"Door","status":"close","type":"Door"}]

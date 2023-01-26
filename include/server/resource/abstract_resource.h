@@ -6,7 +6,7 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
-#include "db/device_db_service.h"
+#include "server/db/device_db_service.h"
 #include "server/resource/utils/exception.h"
 
 namespace interface {

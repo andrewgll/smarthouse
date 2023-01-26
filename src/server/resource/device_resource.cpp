@@ -1,8 +1,8 @@
 #include "server/resource/device_resource.h"
 
+#include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
 #include "Poco/Path.h"
-#include "Poco/JSON/Parser.h"
 #include "server/db/device_db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
@@ -18,6 +18,8 @@ void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
   std::string id = getQueryParameter("id");
   std::string device = dbService.findDevice(id).toString();
+
+  response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
   response.send() << device;
 }
 
@@ -29,7 +31,8 @@ void DeviceResource::handle_post(Poco::Net::HTTPServerRequest &request,
   Poco::Dynamic::Var parseResult = parser.parse(str);
   auto device = parseResult.extract<Poco::JSON::Object::Ptr>();
   dbService.addDevice(device);
-  logger.information(str);
+  response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+  response.send();
 }
 void DeviceResource::handle_delete(Poco::Net::HTTPServerRequest &request,
                                    Poco::Net::HTTPServerResponse &response) {}
