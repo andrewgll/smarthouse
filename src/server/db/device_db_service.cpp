@@ -19,10 +19,10 @@ namespace db {
 DeviceDBService::DeviceDBService(Poco::Path path) : path_(path){};
 
 Poco::SharedPtr<Poco::JSON::Array> DeviceDBService::loadDB() {
-  Poco::File File(path_.toString());
-  Poco::FileStream fis(path_.toString());
+  Poco::FileInputStream fis(path_.toString());
   Poco::JSON::Parser parser;
   Poco::Dynamic::Var result = parser.parse(fis);
+  fis.close();
   return result.extract<Poco::JSON::Array::Ptr>();
 }
 
