@@ -4,15 +4,15 @@
 #include <string>
 
 #include "abstract_factory.h"
+#include "server/resource/abstract_resource.h"
 
 namespace interface {
 namespace resource {
 namespace factory {
 
-class AbstractFactory;
 class Factory {
  public:
-  static AbstractFactory *createResourceFactory(std::string &);
+  static AbstractResource *createResource(std::string &);
 
  private:
   Factory(){};

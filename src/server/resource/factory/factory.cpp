@@ -1,18 +1,19 @@
 #include "server/resource/factory/factory.h"
-#include "server/resource/factory/device_factory.h"
+
+#include "server/resource/abstract_resource.h"
+#include "server/resource/device_resource.h"
 
 namespace interface {
 namespace resource {
 namespace factory {
 
-AbstractFactory *Factory::createResourceFactory(std::string &index) {
-
-  AbstractFactory *factory = nullptr;
+AbstractResource *Factory::createResource(std::string &index) {
+  AbstractResource *resource = nullptr;
   if (index == "device") {
-    factory = new DeviceFactory();
+    resource = new DeviceResource();
   }
 
-  return factory;
+  return resource;
 }
 
 }  // namespace factory

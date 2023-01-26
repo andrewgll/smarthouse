@@ -4,7 +4,7 @@
 
 #include "Poco/ClassLibrary.h"
 #include "Poco/Net/HTTPServerRequest.h"
-#include "server/resource/factory/device_factory.h"
+#include "server/resource/abstract_resource.h"
 #include "server/resource/factory/factory.h"
 #include "server/resource/resource_not_found.h"
 
@@ -33,11 +33,11 @@ Poco::Net::HTTPRequestHandler *Router::getResource(const std::string &route) {
   }
 
   // create corresponding handler for uri
-  interface::resource::factory::AbstractFactory *factory =
-      interface::resource::factory::Factory::createResourceFactory(
+  interface::resource::AbstractResource *resource =
+      interface::resource::factory::Factory::createResource(
           factoryIndex->second);
 
-  return factory->createResource();
+  return resource;
 }
 
 void Router::addRoute(const std::string &route, const std::string &factory) {
