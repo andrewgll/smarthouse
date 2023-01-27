@@ -23,8 +23,8 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
 }
 void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
-  Poco::JSON::Stringifier::condense(
-      dbService.findDevice(getQueryParameter("id")), response.send());
+  auto device = dbService.findDevice(getQueryParameter("id"));
+  Poco::JSON::Stringifier::condense(device, response.send());
 }
 
 void DeviceResource::handle_post(Poco::Net::HTTPServerRequest &request,
