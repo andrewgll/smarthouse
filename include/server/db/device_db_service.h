@@ -7,22 +7,22 @@
 #include "Poco/Dynamic/Var.h"
 #include "Poco/Dynamic/Struct.h"
 #include "Poco/JSON/Array.h"
-#include "device.h"
 
 namespace db {
 
-class DeviceDBService {
+class  DeviceDBService {
  public:
-  DeviceDBService() = default;
+  DeviceDBService();
   DeviceDBService(Poco::Path);
   void addDevice(Poco::SharedPtr<Poco::JSON::Object>);
-  Poco::DynamicStruct findDevice(const std::string&);
+  Poco::SharedPtr<Poco::JSON::Object> findDevice(const std::string&);
   void updateDevice(Poco::SharedPtr<Poco::JSON::Object>, const std::string&);
   void deleteDevice(const std::string&);
   Poco::SharedPtr<Poco::JSON::Array> loadDB();
 
  private:
   Poco::Path path_;
+  Poco::JSON::Array::Ptr db;
 };
 
 }  // namespace db

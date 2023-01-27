@@ -10,49 +10,48 @@
 #include "Poco/Logger.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/Path.h"
-#include "server/db/device.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_builder.h"
 
 namespace db {
 
-DeviceDBService::DeviceDBService(Poco::Path path) : path_(path){};
-
-Poco::SharedPtr<Poco::JSON::Array> DeviceDBService::loadDB() {
+DeviceDBService::DeviceDBService(Poco::Path path) : path_(path) {
+  // Initialize db
   Poco::FileInputStream fis(path_.toString());
   Poco::JSON::Parser parser;
   Poco::Dynamic::Var result = parser.parse(fis);
   fis.close();
-  return result.extract<Poco::JSON::Array::Ptr>();
-}
+  db = result.extract<Poco::JSON::Array::Ptr>();
+};
 void DeviceDBService::addDevice(Poco::JSON::Object::Ptr device) {
-  auto db = DeviceDBService::loadDB();
   device->set("id", db->size());
   db->add(device);
   Poco::FileOutputStream fos(path_.toString());
   Poco::JSON::Stringifier::condense(db, fos);
   fos.close();
 }
-Poco::DynamicStruct DeviceDBService::findDevice(const std::string& id) {
-  auto db = DeviceDBService::loadDB();
+Poco::SharedPtr<Poco::JSON::Object> DeviceDBService::findDevice(
+    const std::string& id) {
   for (auto it = db->begin(); it != db->end(); ++it) {
     Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
-    std::string objId = json->getValue<std::string>("id");
-    if (objId == id) {
-      interface::handling::JsonBuilder builder;
-      builder.withData("id", objId);
-      builder.withData("name", json->getValue<std::string>("name"));
-      builder.withData("type", json->getValue<std::string>("type"));
-      builder.withData("status", json->getValue<std::string>("status"));
-      return builder.build();
+    if (json->getValue<std::string>("id") == id) {
+      return it->extract<Poco::JSON::Object::Ptr>();
     }
   }
   throw interface::resource::Exception(
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
-void DeviceDBService::updateDevice(Poco::JSON::Object::Ptr device , const std::string& id){
- auto db = DeviceDBService::loadDB();
+void DeviceDBService::updateDevice(Poco::JSON::Object::Ptr device,
+                                   const std::string& id) {
+  for (auto it = db->begin(); it != db->end(); ++it) {
+    Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
+    if (json->getValue<std::string>("id") == id) {
+    }
+  }
+  throw interface::resource::Exception(
+      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
+      Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
 void deleteDevice(const std::string&);
 std::string path_;
