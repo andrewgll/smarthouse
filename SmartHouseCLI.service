@@ -1,0 +1,14 @@
+[Unit]
+Description=SmartHouse server that runs in background.
+After=network.target
+[Install]
+WantedBy=multi-user.target
+[Service]
+Type=simple
+ExecStart=~/smarthouse/build/bin/SmartHouseServerCLI
+WorkingDirectory=~/smarthouse/
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n
