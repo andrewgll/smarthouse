@@ -4,8 +4,9 @@
 
 #include "Poco/ClassLibrary.h"
 #include "Poco/Net/HTTPServerRequest.h"
+#include "Poco/Logger.h"
 #include "server/resource/abstract_resource.h"
-#include "server/resource/factory/factory.h"
+#include "server/resource/device_resource.h"
 #include "server/resource/resource_not_found.h"
 
 using namespace Poco;
@@ -15,15 +16,13 @@ Router::Router() { init(); }
 
 void Router::init() {
   // Register new routes here and corresponding handlers for them
-  addRoute("/device", "device");
+  addRoute("/device", new resource::DeviceResource());
 }
 Poco::Net::HTTPRequestHandler *Router::createRequestHandler(
     const Poco::Net::HTTPServerRequest &request) {
-  return getResource(request.getURI());
-}
 
-Poco::Net::HTTPRequestHandler *Router::getResource(const std::string &route) {
-  Poco::URI uri = Poco::URI(route);
+  Poco::Logger& logger = Poco::Logger::get("SmartHouseLogger");
+   Poco::URI uri = Poco::URI(request.getURI());
   // extract path from url, eg.: localhost/device => /device
   // then search in routingTable for corresponding route
   auto factoryIndex = routingTable.find(uri.getPath());
@@ -31,23 +30,13 @@ Poco::Net::HTTPRequestHandler *Router::getResource(const std::string &route) {
   if (factoryIndex == routingTable.end()) {
     return new interface::resource::ResourceNotFound;
   }
-
-  // create corresponding handler for uri
-  interface::resource::AbstractResource *resource =
-      interface::resource::factory::Factory::createResource(
-          factoryIndex->second);
-
-  return resource;
+  return factoryIndex->second;
 }
 
-void Router::addRoute(const std::string &route, const std::string &factory) {
-  routingTable[route] = factory;
+
+void Router::addRoute(const std::string &route,
+                      resource::AbstractResource *resource) {
+  routingTable[route] = resource;
 }
 
 }  // namespace interface
-
-// TODO: learn about ApacheConnector
-// COPIED: add support to Poco ApacheConnector
-// POCO_BEGIN_MANIFEST(Poco::Net::HTTPRequestHandlerFactory)
-// POCO_EXPORT_CLASS(interface::Router)
-// POCO_END_MANIFEST

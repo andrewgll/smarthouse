@@ -92,6 +92,8 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
 
 void AbstractResource::handle_get(HTTPServerRequest &,
                                   HTTPServerResponse &response) {
+  Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
+  logger.information("Oki");
   handleHttpStatusCode(HTTPResponse::HTTP_METHOD_NOT_ALLOWED, response);
   std::ostream &errorStream = response.send();
   errorStream.flush();

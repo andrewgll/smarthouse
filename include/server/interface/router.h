@@ -5,7 +5,7 @@
 #include <string>
 
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
-#include "server/resource/factory/factory.h"
+#include "server/resource/abstract_resource.h"
 
 namespace interface {
 
@@ -13,14 +13,13 @@ class Router : public Poco::Net::HTTPRequestHandlerFactory {
  public:
   Router();
 
-  void addRoute(const std::string &, const std::string &);
+  void addRoute(const std::string &, resource::AbstractResource* resource);
   Poco::Net::HTTPRequestHandler *createRequestHandler(
       const Poco::Net::HTTPServerRequest &request);
 
  private:
   void init();
-  std::map<std::string, std::string> routingTable;
-  Poco::Net::HTTPRequestHandler *getResource(const std::string &);
+   std::map<std::string, resource::AbstractResource*> routingTable;
 };
 
 }  // namespace interface
