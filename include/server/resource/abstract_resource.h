@@ -95,11 +95,11 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
  protected:
   db::DeviceDBService dbService;
 
- private:
   std::string baseUrl;
   std::string requestURI;
   std::string requestHost;
   Poco::URI::QueryParameters queryStringParameters;
+
 };
 
 }  // namespace resource

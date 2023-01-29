@@ -36,7 +36,11 @@ void DeviceResource::handle_post(Poco::Net::HTTPServerRequest &request,
   response.send();
 }
 void DeviceResource::handle_delete(Poco::Net::HTTPServerRequest &request,
-                                   Poco::Net::HTTPServerResponse &response) {}
+                                   Poco::Net::HTTPServerResponse &response) {
+  dbService.deleteDevice(getQueryParameter("id"));
+  response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+  response.send();
+}
 void DeviceResource::handle_options(Poco::Net::HTTPServerRequest &,
                                     Poco::Net::HTTPServerResponse &response) {
   response.set("Allow", "GET, POST, PUT, OPTIONS");

@@ -59,8 +59,21 @@ void DeviceDBService::updateDevice(Poco::SharedPtr<Poco::JSON::Object> device,
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
-void deleteDevice(const std::string&){
- 
+void DeviceDBService::deleteDevice(const std::string& id){
+   for (auto it = db->begin(); it != db->end(); ++it) {
+    Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
+    if (json->getValue<std::string>("id") == id) {
+      
+      db->remove(std::stoi(json->getValue<std::string>("id")));
+      Poco::FileOutputStream fos(path_.toString());
+      Poco::JSON::Stringifier::condense(db, fos);
+      fos.close();
+      return;
+    }
+  }
+  throw interface::resource::Exception(
+      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
+      Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
   
 }
 std::string path_;
