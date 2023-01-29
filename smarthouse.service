@@ -5,8 +5,8 @@ After=network.target
 WantedBy=multi-user.target
 [Service]
 Type=simple
-ExecStart=~/smarthouse/build/bin/SmartHouseServerCLI
-WorkingDirectory=~/smarthouse/
+ExecStart=/home/ubuntu/smarthouse/build/bin/SmartHouseServerCLI
+WorkingDirectory=/home/ubuntu/smarthouse/
 Restart=always
 RestartSec=5
 StandardOutput=syslog
