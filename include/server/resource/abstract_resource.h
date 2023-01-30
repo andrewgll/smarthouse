@@ -82,7 +82,7 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    * @param name The parameter name.
    * @return The parameter value.
    */
-  std::string getQueryParameter(const std::string &);
+  std::string getQueryParameter(const std::string &, bool=true);
 
   /*!
    * It converts an exception to Json API format.

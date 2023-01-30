@@ -77,14 +77,12 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
 
     handling::JsonErrorBuilder errorBuilder =
         handling::JsonErrorBuilder(request.getHost());
-    Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
 
     errorBuilder.sourceAt(request.getURI());
     errorBuilder.withType(exception.type());
     errorBuilder.withStatusCode(exception.code());
     errorBuilder.withDetails(exception.message());
 
-    // TODO: Find out what is assertion violation
     response.send() << errorBuilder.build().toString();
     return;
   }
@@ -148,8 +146,6 @@ Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
 
   return dataObject->getObject("attributes");
 }
-
-// `
 
 void AbstractResource::handleHttpStatusCode(int statusCode,
                                             HTTPServerResponse &response) {
@@ -234,8 +230,8 @@ std::string AbstractResource::getUrl(const std::string &fragment) {
   return baseUrl + fragment;
 }
 
-std::string AbstractResource::getQueryParameter(
-    const std::string &parameterKey) {
+std::string AbstractResource::getQueryParameter(const std::string &parameterKey,
+                                                bool required) {
   auto iterator = std::find_if(
       queryStringParameters.begin(), queryStringParameters.end(),
       [&parameterKey](const std::pair<std::string, std::string> &item) {
@@ -243,6 +239,9 @@ std::string AbstractResource::getQueryParameter(
       });
 
   if (iterator == queryStringParameters.end()) {
+    if (!required) {
+      return "";
+    }
     throw resource::Exception(
         HTTPResponse::HTTP_REASON_BAD_REQUEST,
         "Attribute '" + parameterKey + "' is missing at URL.",
@@ -251,14 +250,14 @@ std::string AbstractResource::getQueryParameter(
 
   return iterator->second;
 }
-std::string AbstractResource::toJson(const Exception &exception) {
-  handling::JsonErrorBuilder errorBuilder(requestHost);
-  errorBuilder.withType(exception.type());
-  errorBuilder.sourceAt(requestURI);
-  errorBuilder.withStatusCode(exception.code());
-  errorBuilder.withDetails(exception.message());
-  return errorBuilder.build().toString();
-}
+// std::string AbstractResource::toJson(const Exception &exception) {
+//   handling::JsonErrorBuilder errorBuilder(requestHost);
+//   errorBuilder.withType(exception.type());
+//   errorBuilder.sourceAt(requestURI);
+//   errorBuilder.withStatusCode(exception.code());
+//   errorBuilder.withDetails(exception.message());
+//   return errorBuilder.build().toString();
+// }
 
 }  // namespace resource
 }  // namespace interface
