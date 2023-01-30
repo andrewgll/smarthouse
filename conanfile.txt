@@ -1,5 +1,15 @@
 [requires]
 poco/1.12.3
+imgui/1.89.2
+glfw/3.3.8
+glew/2.2.0
 
 [generators]
 cmake
+
+[imports]
+./res/bindings, imgui_impl_glfw.cpp -> ../bindings
+./res/bindings, imgui_impl_opengl3.cpp -> ../bindings
+./res/bindings, imgui_impl_glfw.h -> ../bindings
+./res/bindings, imgui_impl_opengl3.h -> ../bindings
+./res/bindings, imgui_impl_opengl3_loader.h -> ../bindings
