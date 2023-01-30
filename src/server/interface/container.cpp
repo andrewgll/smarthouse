@@ -25,7 +25,7 @@ int Container::main(const std::vector<std::string>&) {
 
   if (router == nullptr) {
     logger.fatal("No router set. Stopping server...");
-    return EXIT_CONFIG;
+    return Poco::Util::Application::EXIT_OK;
   }
 
   Poco::Net::HTTPServer httpServer(
