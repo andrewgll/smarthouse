@@ -1,5 +1,8 @@
+<!-- @format -->
+
 # SmartHouse Server
-*Under development*
+
+_Under development_
 
 SmartHouse Server is a typical HTTP server, but for handling smart devices and sensors. Easy to install and maintain, you can register your devices, set statuses for them, etc.
 
@@ -7,12 +10,12 @@ SmartHouse Server is a typical HTTP server, but for handling smart devices and s
 
 You need following programs be installed:
 
-* Cmake
-* Conan pakage manager
+- Cmake
+- Conan pakage manager
 
 Linux:
 
-* ./UnixInstall.sh from root folder
+- `./UnixInstall.sh` from root folder
 
 From Windows:
 
@@ -21,4 +24,3 @@ From Windows:
 ## API Documentation
 
 ...
-
