@@ -60,7 +60,7 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
         request.getMethod() + " from " + request.clientAddress().toString() +
         " to: " + request.getURI() +
         " Content-type: " + request.getContentType() + " Data: " + str;
-    response.add("Info", infoString);
+    response.send() << infoString;
     if (request.getMethod() == HTTPRequest::HTTP_GET) {
       this->handle_get(request, response);
     }
