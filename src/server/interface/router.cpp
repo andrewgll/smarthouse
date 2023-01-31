@@ -5,9 +5,8 @@
 #include "Poco/ClassLibrary.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Logger.h"
-#include "server/resource/abstract_resource.h"
-#include "server/resource/device_resource.h"
 #include "server/resource/resource_not_found.h"
+#include "server/resource/factory/device_resource_factory.h"
 
 using namespace Poco;
 namespace interface {
@@ -16,7 +15,7 @@ Router::Router() { init(); }
 
 void Router::init() {
   // Register new routes here and corresponding handlers for them
-  addRoute<resource::DeviceResource>("/device");
+  addRoute("/device", new resource::DeviceResourceFactory());
 }
 
 Poco::Net::HTTPRequestHandler *Router::createRequestHandler(
@@ -31,7 +30,7 @@ Poco::Net::HTTPRequestHandler *Router::createRequestHandler(
   if (factoryIndex == routingTable.end()) {
     return new interface::resource::ResourceNotFound;
   }
-  return factoryIndex->second.get();
+  return factoryIndex->second->createResource();
 }
 
 }  // namespace interface

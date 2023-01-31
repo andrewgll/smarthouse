@@ -38,7 +38,7 @@ Poco::SharedPtr<Poco::JSON::Object> DeviceDBService::findDevice(
       return it->extract<Poco::JSON::Object::Ptr>();
     }
   }
-  throw interface::resource::Exception(
+  throw interface::resource::HttpServerException(
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
@@ -55,7 +55,7 @@ void DeviceDBService::updateDevice(Poco::SharedPtr<Poco::JSON::Object> device,
       return;
     }
   }
-  throw interface::resource::Exception(
+  throw interface::resource::HttpServerException(
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }

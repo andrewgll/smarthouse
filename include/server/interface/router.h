@@ -6,17 +6,21 @@
 #include <string>
 
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
-#include "server/resource/abstract_resource.h"
+#include "server/resource/factory/resource_factory.h"
 
 namespace interface {
 
 class Router : public Poco::Net::HTTPRequestHandlerFactory {
+  using RoutingTableType =
+      std::map<std::string, resource::ResourceFactory::Ptr>;
+
  public:
   Router();
 
-  template <typename T>
-  inline void addRoute(const std::string &path) {
-    routingTable[path] = std::make_unique<T>();
+  inline void addRoute(const std::string &path,
+                       resource::ResourceFactory *resource_factory) {
+    routingTable.insert(std::pair<std::string, resource::ResourceFactory::Ptr>(
+        path, resource_factory));
   }
 
   Poco::Net::HTTPRequestHandler *createRequestHandler(
@@ -24,8 +28,8 @@ class Router : public Poco::Net::HTTPRequestHandlerFactory {
 
  private:
   void init();
-  std::map<std::string, std::unique_ptr<resource::AbstractResource>>
-      routingTable;
+
+  RoutingTableType routingTable;
 };
 
 }  // namespace interface
