@@ -2,25 +2,34 @@
 #define SmartHouse_Interface_Router_Included
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
-#include "server/resource/factory/factory.h"
+#include "server/resource/factory/resource_factory.h"
 
 namespace interface {
 
 class Router : public Poco::Net::HTTPRequestHandlerFactory {
+  using RoutingTableType =
+      std::map<std::string, resource::ResourceFactory::Ptr>;
+
  public:
   Router();
 
-  void addRoute(const std::string &, const std::string &);
+  inline void addRoute(const std::string &path,
+                       resource::ResourceFactory *resource_factory) {
+    routingTable.insert(std::pair<std::string, resource::ResourceFactory::Ptr>(
+        path, resource_factory));
+  }
+
   Poco::Net::HTTPRequestHandler *createRequestHandler(
       const Poco::Net::HTTPServerRequest &request);
 
  private:
   void init();
-  std::map<std::string, std::string> routingTable;
-  Poco::Net::HTTPRequestHandler *getResource(const std::string &);
+
+  RoutingTableType routingTable;
 };
 
 }  // namespace interface

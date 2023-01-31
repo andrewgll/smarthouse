@@ -1,9 +1,13 @@
+#include <iostream>
+
 #include "server/interface/container.h"
-#include "server/interface/router.h"
 
 int main(int argc, char* argv[]) {
-  interface::Container container;
-  container.setRouter(new interface::Router());
-  // Run application with Router as Request Handler Factory
-  return container.run(argc, argv);
+  try {
+    interface::Container container;
+    return container.run(argc, argv);
+  } catch (const std::exception& e) {
+    std::cout << "There was an error:\n" << e.what() << std::endl;
+    return Poco::Util::Application::EXIT_SOFTWARE;
+  }
 }

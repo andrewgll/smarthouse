@@ -4,6 +4,7 @@
 
 #include "Poco/Net/HTTPServer.h"
 #include "Poco/String.h"
+#include "server/interface/router.h"
 
 namespace interface {
 
@@ -16,6 +17,7 @@ int Container::main(const std::vector<std::string>&) {
   // create logger SmartHouseLogger for future using
   Poco::Logger& logger = Poco::Logger::get("SmartHouseLogger");
   auto* httpServerParams = new Poco::Net::HTTPServerParams();
+  setRouter(new interface::Router());
   httpServerParams->setMaxQueued(250);
   httpServerParams->setMaxThreads(20);
 
@@ -25,7 +27,7 @@ int Container::main(const std::vector<std::string>&) {
 
   if (router == nullptr) {
     logger.fatal("No router set. Stopping server...");
-    return EXIT_CONFIG;
+    return Poco::Util::Application::EXIT_OK;
   }
 
   Poco::Net::HTTPServer httpServer(

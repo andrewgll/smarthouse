@@ -12,7 +12,6 @@ class JsonBuilder {
   explicit JsonBuilder();
   ~JsonBuilder() = default;
 
-  //
   Poco::DynamicStruct &build();
   void withData(const std::string& , const std::string& );
 
