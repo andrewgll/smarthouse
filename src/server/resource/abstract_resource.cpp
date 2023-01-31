@@ -176,7 +176,7 @@ std::string AbstractResource::getQueryParameter(const std::string &parameterKey,
     if (!required) {
       return "";
     }
-    throw resource::Exception(
+    throw resource::HttpServerException(
 
         HTTPResponse::HTTP_REASON_BAD_REQUEST,
         "Attribute '" + parameterKey + "' is missing at URL.",

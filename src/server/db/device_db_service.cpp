@@ -75,7 +75,7 @@ void DeviceDBService::deleteDevice(const std::string& id) {
       return;
     }
   }
-  throw interface::resource::Exception(
+  throw interface::resource::HttpServerException(
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
