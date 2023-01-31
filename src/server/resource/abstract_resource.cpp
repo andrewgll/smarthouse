@@ -52,7 +52,15 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     requestHost = request.getHost();
     baseUrl = "http://" + requestHost + requestURI;
     queryStringParameters = uri.getQueryParameters();
+    // Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
 
+    // std::string str(std::istreambuf_iterator<char>(request.stream()), {});
+
+    // std::string infoString =
+    //     request.getMethod() + " from " + request.clientAddress().toString() +
+    //     " to: " + request.getURI() +
+    //     " Content-type: " + request.getContentType() + " Data: " + str;
+    // response.send() << infoString;
     if (request.getMethod() == HTTPRequest::HTTP_GET) {
       this->handle_get(request, response);
     }
@@ -72,6 +80,7 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     if (request.getMethod() == HTTPRequest::HTTP_OPTIONS) {
       this->handle_options(request, response);
     }
+
   } catch (resource::Exception &exception) {
     handleHttpStatusCode(exception.code(), response);
 
