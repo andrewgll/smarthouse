@@ -49,7 +49,15 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     requestHost = request.getHost();
     baseUrl = "http://" + requestHost + requestURI;
     queryStringParameters = uri.getQueryParameters();
+    // Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
 
+    // std::string str(std::istreambuf_iterator<char>(request.stream()), {});
+
+    // std::string infoString =
+    //     request.getMethod() + " from " + request.clientAddress().toString() +
+    //     " to: " + request.getURI() +
+    //     " Content-type: " + request.getContentType() + " Data: " + str;
+    // response.send() << infoString;
     if (request.getMethod() == HTTPRequest::HTTP_GET) {
       this->handle_get(request, response);
     }
@@ -69,19 +77,20 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     if (request.getMethod() == HTTPRequest::HTTP_OPTIONS) {
       this->handle_options(request, response);
     }
+
   } catch (resource::HttpServerException &exception) {
     response.setStatusAndReason(exception.code());
 
+
+
     handling::JsonErrorBuilder errorBuilder =
         handling::JsonErrorBuilder(request.getHost());
-    Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
 
     errorBuilder.sourceAt(request.getURI());
     errorBuilder.withType(exception.type());
     errorBuilder.withStatusCode(exception.code());
     errorBuilder.withDetails(exception.message());
 
-    // TODO: Find out what is assertion violation
     response.send() << errorBuilder.build().toString();
     return;
   }
@@ -149,12 +158,13 @@ Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
   return dataObject->getObject("attributes");
 }
 
+
 std::string AbstractResource::getUrl(const std::string &fragment) {
   return baseUrl + fragment;
 }
 
-std::string AbstractResource::getQueryParameter(
-    const std::string &parameterKey) {
+std::string AbstractResource::getQueryParameter(const std::string &parameterKey,
+                                                bool required) {
   auto iterator = std::find_if(
       queryStringParameters.begin(), queryStringParameters.end(),
       [&parameterKey](const std::pair<std::string, std::string> &item) {
@@ -162,7 +172,12 @@ std::string AbstractResource::getQueryParameter(
       });
 
   if (iterator == queryStringParameters.end()) {
-    throw resource::HttpServerException(
+
+    if (!required) {
+      return "";
+    }
+    throw resource::Exception(
+
         HTTPResponse::HTTP_REASON_BAD_REQUEST,
         "Attribute '" + parameterKey + "' is missing at URL.",
         HTTPResponse::HTTP_BAD_REQUEST);
@@ -170,14 +185,16 @@ std::string AbstractResource::getQueryParameter(
 
   return iterator->second;
 }
-std::string AbstractResource::toJson(const HttpServerException &exception) {
-  handling::JsonErrorBuilder errorBuilder(requestHost);
-  errorBuilder.withType(exception.type());
-  errorBuilder.sourceAt(requestURI);
-  errorBuilder.withStatusCode(exception.code());
-  errorBuilder.withDetails(exception.message());
-  return errorBuilder.build().toString();
-}
+
+// std::string AbstractResource::toJson(const Exception &exception) {
+//   handling::JsonErrorBuilder errorBuilder(requestHost);
+//   errorBuilder.withType(exception.type());
+//   errorBuilder.sourceAt(requestURI);
+//   errorBuilder.withStatusCode(exception.code());
+//   errorBuilder.withDetails(exception.message());
+//   return errorBuilder.build().toString();
+// }
+
 
 }  // namespace resource
 }  // namespace interface
