@@ -51,13 +51,12 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     queryStringParameters = uri.getQueryParameters();
     // Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
 
-    // std::string str(std::istreambuf_iterator<char>(request.stream()), {});
+    // std::string infoString = "[INFO] " + request.getMethod() + " from " +
+    //                          request.clientAddress().toString() +
+    //                          " to: " + request.getURI() +
+    //                          " Content-type: " + request.getContentType();
+    // logger.information(infoString);
 
-    // std::string infoString =
-    //     request.getMethod() + " from " + request.clientAddress().toString() +
-    //     " to: " + request.getURI() +
-    //     " Content-type: " + request.getContentType() + " Data: " + str;
-    // response.send() << infoString;
     if (request.getMethod() == HTTPRequest::HTTP_GET) {
       this->handle_get(request, response);
     }
@@ -80,8 +79,6 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
 
   } catch (utils::HttpServerException &exception) {
     response.setStatusAndReason(exception.code());
-
-
 
     utils::JsonErrorBuilder errorBuilder =
         utils::JsonErrorBuilder(request.getHost());
@@ -133,32 +130,6 @@ void AbstractResource::handle_options(HTTPServerRequest &,
   errorStream.flush();
 }
 
-Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
-    const std::string &payload) {
-  Poco::JSON::Parser jsonParser;
-  Poco::Dynamic::Var parsingResult = jsonParser.parse(payload);
-  auto jsonObject = parsingResult.extract<Poco::JSON::Object::Ptr>();
-
-  if (jsonObject->isArray("data")) {
-    throw utils::HttpServerException(
-        HTTPResponse::HTTP_REASON_BAD_REQUEST,
-        "This payload can not be represented as a collection.",
-        HTTPResponse::HTTP_BAD_REQUEST);
-  }
-
-  Poco::JSON::Object::Ptr dataObject = jsonObject->getObject("data");
-
-  if (!dataObject->has("attributes")) {
-    throw utils::HttpServerException(
-        HTTPResponse::HTTP_REASON_BAD_REQUEST,
-        "The payload has no an 'attributes' section.",
-        HTTPResponse::HTTP_BAD_REQUEST);
-  }
-
-  return dataObject->getObject("attributes");
-}
-
-
 std::string AbstractResource::getUrl(const std::string &fragment) {
   return baseUrl + fragment;
 }
@@ -172,7 +143,6 @@ std::string AbstractResource::getQueryParameter(const std::string &parameterKey,
       });
 
   if (iterator == queryStringParameters.end()) {
-
     if (!required) {
       return "";
     }

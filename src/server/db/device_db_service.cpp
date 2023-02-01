@@ -46,7 +46,7 @@ Poco::SharedPtr<Poco::JSON::Object> DeviceDBService::findDevice(
     }
   }
   throw interface::resource::utils::HttpServerException(
-      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
+      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
 void DeviceDBService::updateDevice(Poco::SharedPtr<Poco::JSON::Object> device,
@@ -81,7 +81,7 @@ void DeviceDBService::updateDevice(Poco::SharedPtr<Poco::JSON::Object> device,
     }
   }
   throw interface::resource::utils::HttpServerException(
-      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
+      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
 
@@ -95,7 +95,7 @@ void DeviceDBService::deleteDevice(const std::string& id) {
     }
   }
   throw interface::resource::utils::HttpServerException(
-      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found.",
+      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
 
