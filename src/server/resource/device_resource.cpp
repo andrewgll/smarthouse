@@ -27,8 +27,7 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
       std::string str(std::istreambuf_iterator<char>(request.stream()), {});
       Poco::JSON::Parser parser;
       dbService.updateDevice(
-          parser.parse(str).extract<Poco::JSON::Object::Ptr>(),
-          it->second);
+          parser.parse(str).extract<Poco::JSON::Object::Ptr>(), it->second);
     }
     if (it->first == "status") {
       auto device = dbService.findDevice(it->second);
