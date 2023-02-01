@@ -67,9 +67,11 @@ void Container::initLogger() {
                                         .append("logs.txt")
                                         .toString());
   // Archive if size >2K, creates new log file
-  pFileChannel->setProperty("rotation", "2 K");
+  pFileChannel->setProperty("rotation", "3 K");
   // Naming for archived logs, e.g logs0.txt logs1.txt ...
   pFileChannel->setProperty("archive", "number");
+  // Set maximum count of archived log files
+  pFileChannel->setProperty("purgeCount", "3");
   // Add console channel
   Poco::AutoPtr<Poco::ConsoleChannel> pCons(new Poco::ConsoleChannel);
   // We need splitter to manage two channels
@@ -80,6 +82,10 @@ void Container::initLogger() {
 
   Poco::AutoPtr<Poco::PatternFormatter> pPF(new Poco::PatternFormatter);
   // Format log string
+
+  // pPF->setProperty(
+  //     "pattern",
+  //     "{\"type\":\"%p\",\"time\":\"%Y-%m-%d %H:%M:%S\",\"data\":\"%t\"},");
   pPF->setProperty("pattern", "[%p] %Y-%m-%d %H:%M:%S %t");
 
   // this channel format log string
