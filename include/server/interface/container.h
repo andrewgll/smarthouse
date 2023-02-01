@@ -16,11 +16,11 @@ class Container : public Poco::Util::ServerApplication {
   ~Container() override;
 
   void setPort(int);
-
   Poco::Net::HTTPRequestHandlerFactory *getRouter();
   void setRouter(Poco::Net::HTTPRequestHandlerFactory *);
 
  protected:
+  void initLogger();
   int main(const std::vector<std::string> &args) override;
 
  private:

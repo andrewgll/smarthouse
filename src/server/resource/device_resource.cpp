@@ -18,10 +18,10 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
   if (queryStringParameters.size() == 0) {
     throw utils::HttpServerException(HTTPResponse::HTTP_REASON_BAD_REQUEST,
-                                     "Attribute  is missing at URL.",
+                                     "Identificator is missing at URL.",
                                      HTTPResponse::HTTP_BAD_REQUEST);
   }
-  
+
   std::string str(std::istreambuf_iterator<char>(request.stream()), {});
   Poco::JSON::Parser parser;
   dbService.updateDevice(parser.parse(str).extract<Poco::JSON::Object::Ptr>(),

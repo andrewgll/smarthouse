@@ -1,12 +1,13 @@
 #include "server/interface/router.h"
 
-#include <Poco/URI.h>
+#include <string.h>
 
 #include "Poco/ClassLibrary.h"
-#include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Logger.h"
-#include "server/resource/resource_not_found.h"
+#include "Poco/Net/HTTPServerRequest.h"
+#include "Poco/URI.h"
 #include "server/resource/factory/device_resource_factory.h"
+#include "server/resource/resource_not_found.h"
 
 using namespace Poco;
 namespace interface {
@@ -20,13 +21,12 @@ void Router::init() {
 
 Poco::Net::HTTPRequestHandler *Router::createRequestHandler(
     const Poco::Net::HTTPServerRequest &request) {
-  Poco::Logger& logger = Poco::Logger::get("SmartHouseLogger");
   Poco::URI uri = Poco::URI(request.getURI());
   // extract path from url, eg.: localhost/device => /device
   // then search in routingTable for corresponding route
   auto factoryIndex = routingTable.find(uri.getPath());
   // if this routes aren't registered return not found
-  
+
   if (factoryIndex == routingTable.end()) {
     return new interface::resource::ResourceNotFound;
   }

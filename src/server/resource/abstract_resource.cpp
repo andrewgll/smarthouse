@@ -2,7 +2,9 @@
 
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
+#include "Poco/Message.h"
 #include "Poco/Path.h"
+#include "Poco/StreamCopier.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
@@ -43,19 +45,20 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
   try {
     handleHttpHeaders(request, response);
 
+    Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
+    std::string requestData;
+    // TODO: find better way to get data from istream
+    Poco::StreamCopier::copyToString(request.stream(), requestData);
+    logger.information("%s from %s to %s Content-Type: %s Received: %s",
+                       request.getMethod(), request.clientAddress().toString(),
+                       request.getHost(), request.getContentType(),
+                       requestData);
     Poco::URI uri = Poco::URI(request.getURI());
 
     requestURI = request.getURI();
     requestHost = request.getHost();
     baseUrl = "http://" + requestHost + requestURI;
     queryStringParameters = uri.getQueryParameters();
-    // Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
-
-    // std::string infoString = "[INFO] " + request.getMethod() + " from " +
-    //                          request.clientAddress().toString() +
-    //                          " to: " + request.getURI() +
-    //                          " Content-type: " + request.getContentType();
-    // logger.information(infoString);
 
     if (request.getMethod() == HTTPRequest::HTTP_GET) {
       this->handle_get(request, response);
@@ -89,14 +92,12 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     errorBuilder.withDetails(exception.message());
 
     response.send() << errorBuilder.build().toString();
-    return;
   }
 }
 
 void AbstractResource::handle_get(HTTPServerRequest &,
                                   HTTPServerResponse &response) {
   Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
-  logger.information("Oki");
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
   std::ostream &errorStream = response.send();
   errorStream.flush();
