@@ -41,9 +41,8 @@ int Container::main(const std::vector<std::string>&) {
   Poco::Net::HTTPServer httpServer(
       router, Poco::Net::ServerSocket(Poco::UInt16(port_)), httpServerParams);
 
-  logger().information(
-      "SmartHouse server is started on %s:%hu. Type CTRL+C to stop it.",
-      endpoint_, port_);
+  logger().information("SmartHouse server is started on %s:%hu.", endpoint_,
+                       port_);
 
   httpServer.start();
   waitForTerminationRequest();
