@@ -49,33 +49,14 @@ Poco::SharedPtr<Poco::JSON::Object> DeviceDBService::findDevice(
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
 }
-void DeviceDBService::updateDevice(Poco::SharedPtr<Poco::JSON::Object> device,
+void DeviceDBService::updateDevice(Poco::SharedPtr<Poco::JSON::Object> data,
                                    const std::string& id) {
   for (auto it = db->begin(); it != db->end(); ++it) {
     Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
     if (json->getValue<std::string>("id") == id) {
-      bool changed = false;
-      Poco::JSON::Object newObj;
-      for(auto it2 = device->begin(); it2 != device->end(); it2++){
-        for (auto it3 = json->begin(); it3 != json->end(); it3++)
-        { 
-          if(it2->first == it3->first){
-            changed = true;
-            newObj.set(it2->first, it2->second);
-          }
-          else{
-            newObj.set(it3->first, it3->second);
-          }
-        }
-        
+      for (auto it2 = data->begin(); it2 != data->end(); it2++) {
+        json->set(it2->first, it2->second);
       }
-      if(!changed){
-          throw interface::resource::utils::HttpServerException(
-      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Invalid data",
-      Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
-      }
-      newObj.set("id", id);
-      *json = newObj;
       saveDB();
       return;
     }

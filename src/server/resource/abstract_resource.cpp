@@ -46,13 +46,9 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     handleHttpHeaders(request, response);
 
     Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
-    std::string requestData;
-    // TODO: find better way to get data from istream
-    Poco::StreamCopier::copyToString(request.stream(), requestData);
-    logger.information("%s from %s to %s Content-Type: %s Received: %s",
-                       request.getMethod(), request.clientAddress().toString(),
-                       request.getHost(), request.getContentType(),
-                       requestData);
+    logger.information("%s from %s to %s Content-Type: %s", request.getMethod(),
+                       request.clientAddress().toString(), request.getURI(),
+                       request.getContentType());
     Poco::URI uri = Poco::URI(request.getURI());
 
     requestURI = request.getURI();
