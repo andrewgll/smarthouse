@@ -1,12 +1,13 @@
 
-#ifndef SmartHouse_Interface_Handling_JSONAPI_Json_API_Error_Builder_INCLUDED
-#define SmartHouse_Interface_Handling_JSONAPI_Json_API_Error_Builder_INCLUDED
+#ifndef SmartHouse_Interface_utils_JSONAPI_Json_API_Error_Builder_INCLUDED
+#define SmartHouse_Interface_utils_JSONAPI_Json_API_Error_Builder_INCLUDED
 #include <string>
 
 #include "Poco/Dynamic/Struct.h"
 
 namespace interface {
-namespace handling {
+namespace resource {
+namespace utils {
 class JsonErrorBuilder {
  public:
   explicit JsonErrorBuilder(const std::string &);
@@ -26,8 +27,8 @@ class JsonErrorBuilder {
   Poco::Dynamic::Array errorsCollection;
   Poco::DynamicStruct sourceErrorPointer;
 };
-
-}  // namespace handling
+}  // namespace utils
+}  // namespace resource
 }  // namespace interface
 
 #endif

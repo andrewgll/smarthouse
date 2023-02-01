@@ -19,7 +19,7 @@ class  DeviceDBService {
   void updateDevice(Poco::SharedPtr<Poco::JSON::Object>, const std::string&);
   void deleteDevice(const std::string&);
   Poco::SharedPtr<Poco::JSON::Array> loadDB();
-
+  void saveDB();
  private:
   Poco::Path path_;
   Poco::JSON::Array::Ptr db;

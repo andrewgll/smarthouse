@@ -7,12 +7,10 @@
 #include "Poco/Net/HTTPResponse.h"
 
 namespace interface {
+
 namespace resource {
 
-class A {
- public:
-  enum B { a, b, c };
-};
+namespace utils {
 
 class HttpServerException : public std::exception {
   using ResponseCode = Poco::Net::HTTPResponse::HTTPStatus;
@@ -30,7 +28,7 @@ class HttpServerException : public std::exception {
   std::string type_;
   std::string message_;
 };
-
+}  // namespace utils
 }  // namespace resource
 }  // namespace interface
 
