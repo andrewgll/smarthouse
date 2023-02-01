@@ -57,7 +57,7 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    * @param name The parameter name.
    * @return The parameter value.
    */
-  std::string getQueryParameter(const std::string &, bool=true);
+  std::string getQueryParameter(const std::string &, bool = true);
 
   /*!
    * It converts an exception to Json API format.
@@ -65,7 +65,6 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    * @param exception The exception thrown.
    * @return The exception Json API formatted.
    */
-  std::string toJson(const HttpServerException &);
 
  protected:
   // TODO remove this field and make static method to get DBService instance
@@ -75,7 +74,6 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
   std::string requestURI;
   std::string requestHost;
   Poco::URI::QueryParameters queryStringParameters;
-
 };
 
 }  // namespace resource

@@ -1,25 +1,27 @@
 
-#ifndef SmartHouse_Interface_Handling_Json_Builder_INCLUDED
-#define SmartHouse_Interface_Handling_Json_Builder_INCLUDED
+#ifndef SmartHouse_Interface_utils_Json_Builder_INCLUDED
+#define SmartHouse_Interface_utils_Json_Builder_INCLUDED
 #include <string>
 
 #include "Poco/Dynamic/Struct.h"
 
 namespace interface {
-namespace handling {
+
+namespace resource {
+namespace utils {
 class JsonBuilder {
  public:
   explicit JsonBuilder();
   ~JsonBuilder() = default;
 
-  Poco::DynamicStruct &build();
-  void withData(const std::string& , const std::string& );
+  Poco::DynamicStruct& build();
+  void withData(const std::string&, const std::string&);
 
  private:
   Poco::DynamicStruct json;
 };
-
-}  // namespace handling
+}  // namespace utils
+}  // namespace resource
 }  // namespace interface
 
 #endif

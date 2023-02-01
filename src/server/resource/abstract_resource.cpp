@@ -30,7 +30,7 @@ void AbstractResource::handleHttpHeaders(HTTPServerRequest &request,
       request.getMethod() != HTTPRequest::HTTP_POST &&
       request.getMethod() != HTTPRequest::HTTP_DELETE &&
       request.getMethod() != HTTPRequest::HTTP_OPTIONS) {
-    throw resource::HttpServerException(
+    throw utils::HttpServerException(
         "Not Implemented",
         "The request method is not supported by the "
         "server and cannot be handled.",
@@ -78,13 +78,13 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
       this->handle_options(request, response);
     }
 
-  } catch (resource::HttpServerException &exception) {
+  } catch (utils::HttpServerException &exception) {
     response.setStatusAndReason(exception.code());
 
 
 
-    handling::JsonErrorBuilder errorBuilder =
-        handling::JsonErrorBuilder(request.getHost());
+    utils::JsonErrorBuilder errorBuilder =
+        utils::JsonErrorBuilder(request.getHost());
 
     errorBuilder.sourceAt(request.getURI());
     errorBuilder.withType(exception.type());
@@ -140,7 +140,7 @@ Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
   auto jsonObject = parsingResult.extract<Poco::JSON::Object::Ptr>();
 
   if (jsonObject->isArray("data")) {
-    throw resource::HttpServerException(
+    throw utils::HttpServerException(
         HTTPResponse::HTTP_REASON_BAD_REQUEST,
         "This payload can not be represented as a collection.",
         HTTPResponse::HTTP_BAD_REQUEST);
@@ -149,7 +149,7 @@ Poco::JSON::Object::Ptr AbstractResource::getJsonAttributesSectionObject(
   Poco::JSON::Object::Ptr dataObject = jsonObject->getObject("data");
 
   if (!dataObject->has("attributes")) {
-    throw resource::HttpServerException(
+    throw utils::HttpServerException(
         HTTPResponse::HTTP_REASON_BAD_REQUEST,
         "The payload has no an 'attributes' section.",
         HTTPResponse::HTTP_BAD_REQUEST);
@@ -176,7 +176,7 @@ std::string AbstractResource::getQueryParameter(const std::string &parameterKey,
     if (!required) {
       return "";
     }
-    throw resource::HttpServerException(
+    throw utils::HttpServerException(
 
         HTTPResponse::HTTP_REASON_BAD_REQUEST,
         "Attribute '" + parameterKey + "' is missing at URL.",
@@ -185,16 +185,5 @@ std::string AbstractResource::getQueryParameter(const std::string &parameterKey,
 
   return iterator->second;
 }
-
-// std::string AbstractResource::toJson(const Exception &exception) {
-//   handling::JsonErrorBuilder errorBuilder(requestHost);
-//   errorBuilder.withType(exception.type());
-//   errorBuilder.sourceAt(requestURI);
-//   errorBuilder.withStatusCode(exception.code());
-//   errorBuilder.withDetails(exception.message());
-//   return errorBuilder.build().toString();
-// }
-
-
 }  // namespace resource
 }  // namespace interface

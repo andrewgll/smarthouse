@@ -7,6 +7,7 @@ using Poco::LogStream;
 
 namespace interface {
 namespace resource {
+namespace utils {
 HttpServerException::HttpServerException(const std::string& type,
                                          const std::string& message,
                                          ResponseCode status_code)
@@ -17,5 +18,6 @@ HttpServerException::HttpServerException(const std::string& type,
        << "Type: " << type_ << ", Message: " << message_
        << ", Status code: " << status_code_ << std::endl;
 }
+}  // namespace utils
 }  // namespace resource
 }  // namespace interface
