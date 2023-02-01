@@ -14,7 +14,7 @@ HttpServerException::HttpServerException(const std::string& type,
     : status_code_(status_code), type_(type), message_(message) {
   Logger& logger = Logger::get("HttpServerException");
   LogStream lstr(logger);
-  lstr << "Exception was created: "
+  lstr << "[ERROR]"
        << "Type: " << type_ << ", Message: " << message_
        << ", Status code: " << status_code_ << std::endl;
 }
