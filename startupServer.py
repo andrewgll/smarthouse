@@ -17,6 +17,10 @@ class CustomHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             subprocess.run(command.split())
         if self.path == '/stop':
             
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+
             command = 'sudo systemctl stop smarthouse.service'
             subprocess.run(command.split())
         else:
