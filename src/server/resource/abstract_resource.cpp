@@ -1,10 +1,11 @@
 #include "server/resource/abstract_resource.h"
 
+#include <memory>
+
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
-#include "Poco/Message.h"
 #include "Poco/Path.h"
-#include "Poco/StreamCopier.h"
+#include "server/db/db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
@@ -12,14 +13,14 @@ namespace interface {
 namespace resource {
 
 using namespace Poco::Net;
-
-AbstractResource::AbstractResource()
+AbstractResource::AbstractResource() : baseUrl(), requestURI(), requestHost() {}
+AbstractResource::AbstractResource(
+    Poco::Path &path =
+        Poco::Path(Poco::Path::current()).append("db").append("devices.json"))
     : baseUrl(),
       requestURI(),
       requestHost(),
-      dbService(Poco::Path(Poco::Path::current())
-                    .append("db")
-                    .append("devices.json")) {}
+      dbService(std::unique_ptr<db::DBService>(new db::DBService(path))) {}
 
 AbstractResource::~AbstractResource() {}
 
@@ -45,10 +46,6 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
   try {
     handleHttpHeaders(request, response);
 
-    Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
-    logger.information("%s from %s to %s Content-Type: %s", request.getMethod(),
-                       request.clientAddress().toString(), request.getURI(),
-                       request.getContentType());
     Poco::URI uri = Poco::URI(request.getURI());
 
     requestURI = request.getURI();

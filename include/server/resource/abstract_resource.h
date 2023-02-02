@@ -1,12 +1,13 @@
 #ifndef SmartHouse_Interface_Resource_Abstract_Resource_INCLUDED
 #define SmartHouse_Interface_Resource_Abstract_Resource_INCLUDED
+#include <memory>
 
 #include "Poco/JSON/Object.h"
 #include "Poco/Net/HTTPRequestHandler.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
-#include "server/db/device_db_service.h"
+#include "server/db/db_service.h"
 #include "server/resource/utils/exception.h"
 
 namespace interface {
@@ -15,6 +16,7 @@ namespace resource {
 class AbstractResource : public Poco::Net::HTTPRequestHandler {
  public:
   AbstractResource();
+  AbstractResource(Poco::Path &);
   virtual ~AbstractResource() override;
 
   void handleRequest(Poco::Net::HTTPServerRequest &,
@@ -42,7 +44,6 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
   virtual void handleHttpHeaders(Poco::Net::HTTPServerRequest &,
                                  Poco::Net::HTTPServerResponse &);
 
- 
   /*!
    * @param fragment Part that it wishes to add to a URL.
    * @return A complete URL with a fragment added to its end.
@@ -55,11 +56,9 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    */
   std::string getQueryParameter(const std::string &, bool = true);
 
-
-
  protected:
   // TODO remove this field and make static method to get DBService instance
-  db::DeviceDBService dbService;
+  std::unique_ptr<db::DBService> dbService;
 
   std::string baseUrl;
   std::string requestURI;
