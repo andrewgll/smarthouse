@@ -24,7 +24,13 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
                                      "Identificator is missing at URL.",
                                      HTTPResponse::HTTP_BAD_REQUEST);
   }
-
+  //------ WILL BE REMOVED IN FUTURE
+  if (queryStringParameters.front().second == "0") {
+    auto device = dbService->findItem("2");
+    device->set("status", "closed");
+    dbService->saveDB();
+  }
+  //------
   std::string str(std::istreambuf_iterator<char>(request.stream()), {});
   Poco::JSON::Parser parser;
   dbService->updateItem(parser.parse(str).extract<Poco::JSON::Object::Ptr>(),

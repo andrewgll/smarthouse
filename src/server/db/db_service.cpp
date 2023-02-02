@@ -27,16 +27,19 @@ Poco::SharedPtr<Poco::JSON::Array> DBService::loadDB() {
   fis.close();
   return result.extract<Poco::JSON::Array::Ptr>();
 }
+
 void DBService::saveDB() {
   Poco::FileOutputStream fos(path_.toString());
   Poco::JSON::Stringifier::condense(db, fos);
   fos.close();
 }
-void DBService::addItem(Poco::JSON::Object::Ptr device) {
-  device->set("id", db->size());
-  db->add(device);
-  saveDB();
-}
+
+// Poco::JSON::Array::Ptr DBService::findByStateGroup(std::string& state) {}
+// void DBService::addItem(Poco::JSON::Object::Ptr device) {
+//   device->set("id", db->size());
+//   db->add(device);
+//   saveDB();
+// }
 Poco::SharedPtr<Poco::JSON::Object> DBService::findItem(const std::string& id) {
   for (auto it = db->begin(); it != db->end(); ++it) {
     Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
@@ -47,6 +50,11 @@ Poco::SharedPtr<Poco::JSON::Object> DBService::findItem(const std::string& id) {
   throw interface::resource::utils::HttpServerException(
       Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
       Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+}
+void DBService::addItem(Poco::JSON::Object::Ptr device) {
+  device->set("id", db->size());
+  db->add(device);
+  saveDB();
 }
 void DBService::updateItem(Poco::SharedPtr<Poco::JSON::Object> data,
                            const std::string& id) {
