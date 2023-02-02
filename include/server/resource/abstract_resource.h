@@ -6,7 +6,6 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
-#include "memory"
 #include "server/db/abstract_db_service.h"
 #include "server/resource/utils/exception.h"
 
@@ -43,6 +42,7 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
   virtual void handleHttpHeaders(Poco::Net::HTTPServerRequest &,
                                  Poco::Net::HTTPServerResponse &);
 
+ 
   /*!
    * @param fragment Part that it wishes to add to a URL.
    * @return A complete URL with a fragment added to its end.
@@ -55,9 +55,12 @@ class AbstractResource : public Poco::Net::HTTPRequestHandler {
    */
   std::string getQueryParameter(const std::string &, bool = true);
 
+
+
  protected:
   // TODO remove this field and make static method to get DBService instance
-  std::unique_ptr<db::AbstractDBService> dbService;
+  db::AbstractDBService* dbService;
+
   std::string baseUrl;
   std::string requestURI;
   std::string requestHost;

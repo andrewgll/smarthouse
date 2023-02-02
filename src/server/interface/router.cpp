@@ -7,6 +7,7 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/URI.h"
 #include "server/resource/factory/device_resource_factory.h"
+#include "server/resource/factory/logger_resource_factory.h"
 #include "server/resource/resource_not_found.h"
 
 using namespace Poco;
@@ -17,6 +18,7 @@ Router::Router() { init(); }
 void Router::init() {
   // Register new routes here and corresponding handlers for them
   addRoute("/device", new resource::DeviceResourceFactory());
+  addRoute("/logs", new resource::LoggerResourceFactory());
 }
 
 Poco::Net::HTTPRequestHandler *Router::createRequestHandler(

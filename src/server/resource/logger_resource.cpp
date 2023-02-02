@@ -3,17 +3,24 @@
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
 #include "Poco/Path.h"
-#include "server/db/device_db_service.h"
+#include "server/db/logger_db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
 namespace interface {
 namespace resource {
 
-LoggerResource::LoggerResource() : AbstractResource() {}
+LoggerResource::LoggerResource() : AbstractResource() {
+  dbService = new db::LoggerDBService(
+      Poco::Path(Poco::Path::current()).append("logs").append("logs.txt"));
+}
 
 void LoggerResource::handle_get(Poco::Net::HTTPServerRequest &request,
-                                Poco::Net::HTTPServerResponse &response) {}
+                                Poco::Net::HTTPServerResponse &response) {
+  auto logs = dbService->loadDB();
+  Poco::JSON::Stringifier::condense(logs, response.send());
+  return;
+}
 void LoggerResource::handle_options(Poco::Net::HTTPServerRequest &,
                                     Poco::Net::HTTPServerResponse &response) {
   response.set("Allow", "GET, OPTIONS");

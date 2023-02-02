@@ -15,7 +15,7 @@
 
 namespace db {
 AbstractDBService::AbstractDBService() : pathToDB() {}
-AbstractDBService::AbstractDBService(Poco::Path path) : pathToDB(path) {
+AbstractDBService::AbstractDBService(Poco::Path& path) : pathToDB(path) {
   // Initialize db
   db = loadDB();
 };

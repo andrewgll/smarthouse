@@ -9,7 +9,7 @@ namespace db {
 class AbstractDBService {
  public:
   AbstractDBService();
-  AbstractDBService(Poco::Path);
+  AbstractDBService(Poco::Path&);
 
   Poco::SharedPtr<Poco::JSON::Array> loadDB();
   void saveDB();

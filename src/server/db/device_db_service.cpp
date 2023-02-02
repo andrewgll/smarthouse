@@ -16,7 +16,7 @@
 
 namespace db {
 
-DeviceDBService::DeviceDBService(Poco::Path path) : AbstractDBService(path){};
+DeviceDBService::DeviceDBService(Poco::Path& path) : AbstractDBService(path){};
 void DeviceDBService::addItem(Poco::JSON::Object::Ptr device) {
   device->set("id", db->size());
   db->add(device);
