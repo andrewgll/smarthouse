@@ -8,3 +8,4 @@ conan install  ..
 cmake .. 
 cmake --build . --config Release
 cd ..
+./startupServer.py
