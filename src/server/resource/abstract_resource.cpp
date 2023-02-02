@@ -1,8 +1,11 @@
 #include "server/resource/abstract_resource.h"
 
+#include <memory>
+
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
 #include "Poco/Path.h"
+#include "server/db/db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
@@ -10,14 +13,14 @@ namespace interface {
 namespace resource {
 
 using namespace Poco::Net;
-
-AbstractResource::AbstractResource()
+AbstractResource::AbstractResource() : baseUrl(), requestURI(), requestHost() {}
+AbstractResource::AbstractResource(
+    Poco::Path &path =
+        Poco::Path(Poco::Path::current()).append("db").append("devices.json"))
     : baseUrl(),
       requestURI(),
       requestHost(),
-      dbService(Poco::Path(Poco::Path::current())
-                    .append("db")
-                    .append("devices.json")) {}
+      dbService(std::unique_ptr<db::DBService>(new db::DBService(path))) {}
 
 AbstractResource::~AbstractResource() {}
 
@@ -49,13 +52,6 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     requestHost = request.getHost();
     baseUrl = "http://" + requestHost + requestURI;
     queryStringParameters = uri.getQueryParameters();
-    // Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
-
-    // std::string infoString = "[INFO] " + request.getMethod() + " from " +
-    //                          request.clientAddress().toString() +
-    //                          " to: " + request.getURI() +
-    //                          " Content-type: " + request.getContentType();
-    // logger.information(infoString);
 
     if (request.getMethod() == HTTPRequest::HTTP_GET) {
       this->handle_get(request, response);
@@ -89,14 +85,12 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     errorBuilder.withDetails(exception.message());
 
     response.send() << errorBuilder.build().toString();
-    return;
   }
 }
 
 void AbstractResource::handle_get(HTTPServerRequest &,
                                   HTTPServerResponse &response) {
   Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
-  logger.information("Oki");
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
   std::ostream &errorStream = response.send();
   errorStream.flush();

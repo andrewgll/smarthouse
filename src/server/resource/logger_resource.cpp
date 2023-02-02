@@ -1,9 +1,10 @@
 #include "server/resource/logger_resource.h"
 
+#include "Poco/FileStream.h"
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
 #include "Poco/Path.h"
-#include "server/db/device_db_service.h"
+#include "server/db/db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
 
@@ -14,15 +15,14 @@ LoggerResource::LoggerResource() : AbstractResource() {}
 
 void LoggerResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
-  std::string id = getQueryParameter("id", false);
-  if (id == "") {
-    auto device = dbService.loadDB();
-    Poco::JSON::Stringifier::condense(device, response.send());
-
-  } else {
-    auto device = dbService.findDevice(id);
-    Poco::JSON::Stringifier::condense(device, response.send());
-  }
+  Poco::FileInputStream fis(Poco::Path(Poco::Path::current())
+                                .append("logs")
+                                .append("logs.txt")
+                                .toString());
+  std::istreambuf_iterator<char> eos;
+  std::string str(std::istreambuf_iterator<char>(fis), eos);
+  fis.close();
+  response.send() << str;
 }
 void LoggerResource::handle_options(Poco::Net::HTTPServerRequest &,
                                     Poco::Net::HTTPServerResponse &response) {
