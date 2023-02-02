@@ -14,12 +14,7 @@ namespace resource {
 using namespace Poco::Net;
 
 AbstractResource::AbstractResource()
-    : baseUrl(),
-      requestURI(),
-      requestHost(),
-      dbService(Poco::Path(Poco::Path::current())
-                    .append("db")
-                    .append("devices.json")) {}
+    : baseUrl(), requestURI(), requestHost(), dbService() {}
 
 AbstractResource::~AbstractResource() {}
 
@@ -93,7 +88,6 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
 
 void AbstractResource::handle_get(HTTPServerRequest &,
                                   HTTPServerResponse &response) {
-  Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
   std::ostream &errorStream = response.send();
   errorStream.flush();

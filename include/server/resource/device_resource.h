@@ -27,3 +27,4 @@ class DeviceResource : public AbstractResource {
 }  // namespace interface
 
 #endif
+

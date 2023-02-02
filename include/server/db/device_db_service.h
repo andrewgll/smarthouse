@@ -3,26 +3,20 @@
 
 #include <string>
 
-#include "Poco/Path.h"
-#include "Poco/Dynamic/Var.h"
-#include "Poco/Dynamic/Struct.h"
 #include "Poco/JSON/Array.h"
+#include "Poco/Path.h"
+#include "abstract_db_service.h"
 
 namespace db {
 
-class  DeviceDBService {
+class DeviceDBService : public AbstractDBService {
  public:
-  DeviceDBService();
   DeviceDBService(Poco::Path);
-  void addDevice(Poco::SharedPtr<Poco::JSON::Object>);
-  Poco::SharedPtr<Poco::JSON::Object> findDevice(const std::string&);
-  void updateDevice(Poco::SharedPtr<Poco::JSON::Object>, const std::string&);
-  void deleteDevice(const std::string&);
-  Poco::SharedPtr<Poco::JSON::Array> loadDB();
-  void saveDB();
- private:
-  Poco::Path path_;
-  Poco::JSON::Array::Ptr db;
+  void addItem(Poco::SharedPtr<Poco::JSON::Object>) override;
+  Poco::SharedPtr<Poco::JSON::Object> findItem(const std::string&) override;
+  void updateItem(Poco::SharedPtr<Poco::JSON::Object>,
+                  const std::string&) override;
+  void deleteItem(const std::string&) override;
 };
 
 }  // namespace db

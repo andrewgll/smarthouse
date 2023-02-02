@@ -3,6 +3,7 @@
 #include "Poco/JSON/Parser.h"
 #include "Poco/Logger.h"
 #include "Poco/Path.h"
+#include "server/db/abstract_db_service.h"
 #include "server/db/device_db_service.h"
 #include "server/resource/utils/exception.h"
 #include "server/resource/utils/json_error_builder.h"
@@ -12,7 +13,10 @@ namespace resource {
 
 using namespace Poco::Net;
 
-DeviceResource::DeviceResource() : AbstractResource() {}
+DeviceResource::DeviceResource() : AbstractResource() {
+  dbService = new db::DeviceDBService(
+      Poco::Path(Poco::Path::current()).append("db").append("devices.json"));
+}
 
 void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
@@ -24,8 +28,8 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
 
   std::string str(std::istreambuf_iterator<char>(request.stream()), {});
   Poco::JSON::Parser parser;
-  dbService.updateDevice(parser.parse(str).extract<Poco::JSON::Object::Ptr>(),
-                         queryStringParameters.front().second);
+  dbService->updateItem(parser.parse(str).extract<Poco::JSON::Object::Ptr>(),
+                        queryStringParameters.front().second);
 
   response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
   response.send();
@@ -33,12 +37,14 @@ void DeviceResource::handle_put(Poco::Net::HTTPServerRequest &request,
 void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
                                 Poco::Net::HTTPServerResponse &response) {
   if (queryStringParameters.size() == 0) {
-    auto device = dbService.loadDB();
+    auto device = dbService->loadDB();
     Poco::JSON::Stringifier::condense(device, response.send());
+    return;
   }
   for (auto it = queryStringParameters.begin();
        it != queryStringParameters.end(); it++) {
-    auto device = dbService.findDevice(it->second);
+    auto device = dbService->findItem(it->second);
+
     if (it->first == "id") {
       Poco::JSON::Stringifier::condense(device, response.send());
     }
@@ -53,13 +59,13 @@ void DeviceResource::handle_post(Poco::Net::HTTPServerRequest &request,
                                  Poco::Net::HTTPServerResponse &response) {
   std::string str(std::istreambuf_iterator<char>(request.stream()), {});
   Poco::JSON::Parser parser;
-  dbService.addDevice(parser.parse(str).extract<Poco::JSON::Object::Ptr>());
+  dbService->addItem(parser.parse(str).extract<Poco::JSON::Object::Ptr>());
   response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
   response.send();
 }
 void DeviceResource::handle_delete(Poco::Net::HTTPServerRequest &request,
                                    Poco::Net::HTTPServerResponse &response) {
-  dbService.deleteDevice(getQueryParameter("id"));
+  dbService->deleteItem(getQueryParameter("id"));
   response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
   response.send();
 }
