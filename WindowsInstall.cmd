@@ -1,4 +1,6 @@
 mkdir build 
+mkdir db
+mkdir logs
 cd build
 conan install .. --build=missing
 cmake ..
