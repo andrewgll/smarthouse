@@ -45,10 +45,8 @@ void DeviceResource::handle_get(Poco::Net::HTTPServerRequest &request,
     if (it->first == "id") {
       Poco::JSON::Stringifier::condense(device, response.send());
     }
-    if (it->first == "status") {
-      Poco::JSON::Stringifier::condense(device->getValue<std::string>("status"),
-                                        response.send());
-    }
+    Poco::JSON::Stringifier::condense(device->getValue<std::string>(it->first),
+                                      response.send());
   }
 }
 
