@@ -31,6 +31,6 @@ class CustomHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
 
-httpd = http.server.HTTPServer(('localhost', 8008),
+httpd = http.server.HTTPServer(('0.0.0.0', 8008),
                                CustomHTTPRequestHandler)
 httpd.serve_forever()
