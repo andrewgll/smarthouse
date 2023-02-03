@@ -8,7 +8,7 @@ class CustomHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
 
-        if self.path == '/run':
+        if self.path == '/start':
 
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
