@@ -13,9 +13,6 @@ class CustomHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-
-            # Execute the other app
-
             command = 'sudo systemctl start smarthouse.service'
             subprocess.run(command.split())
         if self.path == '/stop':
@@ -26,9 +23,7 @@ class CustomHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             command = 'sudo systemctl stop smarthouse.service'
             subprocess.run(command.split())
-        else:
-            self.send_response(404)
-            self.end_headers()
+      
 
 
 httpd = http.server.HTTPServer(('0.0.0.0', 8008),
