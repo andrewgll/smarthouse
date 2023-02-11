@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
 #include "server/resource/factory/resource_factory.h"
@@ -12,7 +13,7 @@ namespace interface {
 
 class Router : public Poco::Net::HTTPRequestHandlerFactory {
   using RoutingTableType =
-      std::map<std::string, resource::ResourceFactory::Ptr>;
+      std::unordered_map<std::string, resource::ResourceFactory::Ptr>;
 
  public:
   Router();

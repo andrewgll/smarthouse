@@ -7,9 +7,6 @@ namespace interface {
 namespace resource {
 
 class LoggerResource : public AbstractResource {
- public:
-  LoggerResource();
-
  protected:
   void handle_get(Poco::Net::HTTPServerRequest &,
                   Poco::Net::HTTPServerResponse &) override;

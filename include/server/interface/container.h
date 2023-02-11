@@ -20,7 +20,8 @@ class Container : public Poco::Util::ServerApplication {
   void setRouter(Poco::Net::HTTPRequestHandlerFactory *);
 
  protected:
-  void initLogger();
+  void initLogger(const std::string &, const std::string &,
+                  const std::string &);
   int main(const std::vector<std::string> &args) override;
 
  private:

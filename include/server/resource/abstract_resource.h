@@ -1,6 +1,8 @@
-#ifndef SmartHouse_Interface_Resource_Abstract_Resource_INCLUDED
-#define SmartHouse_Interface_Resource_Abstract_Resource_INCLUDED
-#include <memory>
+#ifndef SMARTHOUSE_INTERFACE_RESOURCE_ABSTRACT_RESOURCE_INCLUDED
+#define SMARTHOUSE_INTERFACE_RESOURCE_ABSTRACT_RESOURCE_INCLUDED
+
+#include <functional>
+#include <unordered_map>
 
 #include "Poco/JSON/Object.h"
 #include "Poco/Net/HTTPRequestHandler.h"
@@ -8,55 +10,47 @@
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/URI.h"
 #include "server/db/db_service.h"
-#include "server/resource/utils/exception.h"
 
 namespace interface {
 namespace resource {
 
-class AbstractResource : public Poco::Net::HTTPRequestHandler {
+using namespace Poco::Net;
+
+class AbstractResource : public HTTPRequestHandler {
  public:
   AbstractResource();
   AbstractResource(Poco::Path &);
   virtual ~AbstractResource() override;
 
-  void handleRequest(Poco::Net::HTTPServerRequest &,
-                     Poco::Net::HTTPServerResponse &) override;
+  void handleRequest(HTTPServerRequest &, HTTPServerResponse &) override;
 
  protected:
-  void logRequest(Poco::Net::HTTPServerRequest &);
+  void logRequest(HTTPServerRequest &);
 
-  virtual void handle_get(Poco::Net::HTTPServerRequest &,
-                          Poco::Net::HTTPServerResponse &);
+  virtual void handle_get(HTTPServerRequest &, HTTPServerResponse &);
 
-  virtual void handle_put(Poco::Net::HTTPServerRequest &,
-                          Poco::Net::HTTPServerResponse &);
+  virtual void handle_put(HTTPServerRequest &, HTTPServerResponse &);
 
-  virtual void handle_post(Poco::Net::HTTPServerRequest &,
-                           Poco::Net::HTTPServerResponse &);
+  virtual void handle_post(HTTPServerRequest &, HTTPServerResponse &);
 
-  virtual void handle_delete(Poco::Net::HTTPServerRequest &,
-                             Poco::Net::HTTPServerResponse &);
+  virtual void handle_delete(HTTPServerRequest &, HTTPServerResponse &);
 
-  virtual void handle_options(Poco::Net::HTTPServerRequest &,
-                              Poco::Net::HTTPServerResponse &);
+  virtual void handle_options(HTTPServerRequest &, HTTPServerResponse &);
 
-  /// It validates required information into the Http headers.
-  virtual void handleHttpHeaders(Poco::Net::HTTPServerRequest &,
-                                 Poco::Net::HTTPServerResponse &);
-
-  /*!
-   * @param fragment Part that it wishes to add to a URL.
-   * @return A complete URL with a fragment added to its end.
-   */
   std::string getUrl(const std::string &fragment);
 
-  /*!
-   * @param name The parameter name.
-   * @return The parameter value.
-   */
   std::string getQueryParameter(const std::string &, bool = true);
 
  protected:
+  std::unordered_map<std::string,
+                     std::function<void(AbstractResource &, HTTPServerRequest &,
+                                        HTTPServerResponse &)>>
+      handler_map = {
+          {HTTPRequest::HTTP_GET, &AbstractResource::handle_get},
+          {HTTPRequest::HTTP_PUT, &AbstractResource::handle_put},
+          {HTTPRequest::HTTP_POST, &AbstractResource::handle_post},
+          {HTTPRequest::HTTP_DELETE, &AbstractResource::handle_delete},
+          {HTTPRequest::HTTP_OPTIONS, &AbstractResource::handle_options}};
   // TODO remove this field and make static method to get DBService instance
   std::unique_ptr<db::DBService> dbService;
 

@@ -23,7 +23,25 @@ Container::~Container() { delete router_; }
 // Here application start
 int Container::main(const std::vector<std::string>&) {
   // create logger SmartHouseLogger for future using
-  initLogger();
+  initLogger("InfoLogger",
+             Poco::Path(Poco::Path::current())
+                 .append("logs")
+                 .append("information.txt")
+                 .toString(),
+             "weekly");
+  initLogger("ErrorLogger",
+             Poco::Path(Poco::Path::current())
+                 .append("logs")
+                 .append("error.txt")
+                 .toString(),
+             "monthly");
+  initLogger("WarningLogger",
+             Poco::Path(Poco::Path::current())
+                 .append("logs")
+                 .append("warning.txt")
+                 .toString(),
+             "monthly");
+  setLogger(Poco::Logger::get("InfoLogger"));
   auto* httpServerParams = new Poco::Net::HTTPServerParams();
   setRouter(new interface::Router());
   httpServerParams->setMaxQueued(250);
@@ -34,7 +52,7 @@ int Container::main(const std::vector<std::string>&) {
   auto router = getRouter();
 
   if (router == nullptr) {
-    logger().fatal("No router set. Stopping server...");
+    Poco::Logger::get("ErrorLogger").error("No router set. Stopping server...");
     return Poco::Util::Application::EXIT_OK;
   }
 
@@ -58,26 +76,37 @@ void Container::setPort(int _port) { port_ = _port; }
 void Container::setRouter(Poco::Net::HTTPRequestHandlerFactory* router) {
   router_ = router;
 }
-void Container::initLogger() {
+void Container::initLogger(const std::string& name, const std::string& filePath,
+                           const std::string& rotation) {
   // Create file channel with path to store log file
   Poco::AutoPtr<Poco::FileChannel> pFileChannel(new Poco::FileChannel);
   pFileChannel->setProperty("path", Poco::Path(Poco::Path::current())
                                         .append("logs")
                                         .append("logs.txt")
                                         .toString());
-  // Archive if size >2K, creates new log file
-  pFileChannel->setProperty("rotation", "3 K");
+  // Archive if logs older than 1 week, creates new log file
+  pFileChannel->setProperty("rotation", "weekly");
   // Naming for archived logs, e.g logs0.txt logs1.txt ...
   pFileChannel->setProperty("archive", "number");
   // Set maximum count of archived log files
   pFileChannel->setProperty("purgeCount", "3");
+
+  // Create file channel with custom path to store log file
+  Poco::AutoPtr<Poco::FileChannel> pFileChannelBase(new Poco::FileChannel);
+  pFileChannelBase->setProperty("path", filePath);
+  // Archive if logs older than rotation, creates new log file
+  pFileChannelBase->setProperty("rotation", rotation);
+  pFileChannelBase->setProperty("archive", "number");
+  pFileChannelBase->setProperty("purgeCount", "3");
+
   // Add console channel
   Poco::AutoPtr<Poco::ConsoleChannel> pCons(new Poco::ConsoleChannel);
-  // We need splitter to manage two channels
+  // We need splitter to manage three channels
   Poco::AutoPtr<Poco::SplitterChannel> pSplitter(new Poco::SplitterChannel);
 
   pSplitter->addChannel(pCons);
   pSplitter->addChannel(pFileChannel);
+  pSplitter->addChannel(pFileChannelBase);
 
   Poco::AutoPtr<Poco::PatternFormatter> pPF(new Poco::PatternFormatter);
   // Format log string
@@ -94,9 +123,7 @@ void Container::initLogger() {
   // Create async channel, which will handle all other channels, starting from
   // formatting channel
   Poco::AutoPtr<Poco::AsyncChannel> pAsyncChannel(new Poco::AsyncChannel(pFC));
-
-  setLogger(Poco::Logger::get("SmartHouseLogger"));
-  logger().setChannel(pFC);
+  Poco::Logger::get(name).setChannel(pAsyncChannel);
 }
 Poco::Net::HTTPRequestHandlerFactory* Container::getRouter() { return router_; }
 

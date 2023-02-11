@@ -12,7 +12,6 @@ _deps
 build/*
 bin/*
 logs/*
-db/*
 
 # Prerequisites
 *.d

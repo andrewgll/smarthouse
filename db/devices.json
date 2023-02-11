@@ -1,0 +1,10 @@
+[
+  { "id": "0", "name": "smokeSensor", "status": "smokeNOTDetected" },
+  { "id": "1", "name": "waterSensor", "status": "floodNOTDetected" },
+  { "id": "2", "name": "window", "status": "closed" },
+  { "id": "3", "name": "light", "status": "off" },
+  { "id": "4", "name": "smartDevice", "status": "off" },
+  { "id": "5", "name": "oven", "status": "off" },
+  { "id": "6", "name": "tap", "status": "closed" },
+  { "id": "7", "name": "garageDoors", "status": "closed" }
+]

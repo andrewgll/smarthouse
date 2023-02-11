@@ -8,6 +8,8 @@
 namespace interface {
 namespace resource {
 
+using namespace Poco::Net;
+
 class ResourceNotFound : public Poco::Net::HTTPRequestHandler {
  public:
   void handleRequest(Poco::Net::HTTPServerRequest &,

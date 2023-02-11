@@ -12,7 +12,7 @@ HttpServerException::HttpServerException(const std::string& type,
                                          const std::string& message,
                                          ResponseCode status_code)
     : status_code_(status_code), type_(type), message_(message) {
-  Poco::Logger::get("SmartHouseLogger")
+  Poco::Logger::get("ErrorLogger")
       .error("Type: " + type_ + ", Message: " + message_ +
              " Status code: " + std::to_string(status_code_));
 }

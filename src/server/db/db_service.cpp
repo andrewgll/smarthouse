@@ -19,61 +19,103 @@ DBService::DBService(Poco::Path path) : path_(path) {
   // Initialize db
   db = loadDB();
 };
-
+Poco::JSON::Array::Ptr DBService::getDB() {
+  if (db != nullptr) {
+    return db;
+  }
+  throw interface::resource::utils::HttpServerException(
+      Poco::Net::HTTPResponse::HTTP_REASON_INTERNAL_SERVER_ERROR,
+      "Could not find data base.",
+      Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+}
 Poco::SharedPtr<Poco::JSON::Array> DBService::loadDB() {
-  Poco::FileInputStream fis(path_.toString());
-  Poco::JSON::Parser parser;
-  Poco::Dynamic::Var result = parser.parse(fis);
-  fis.close();
-  return result.extract<Poco::JSON::Array::Ptr>();
+  try {
+    Poco::FileInputStream fis(path_.toString());
+    Poco::JSON::Parser parser;
+    Poco::Dynamic::Var result = parser.parse(fis);
+    fis.close();
+    return result.extract<Poco::JSON::Array::Ptr>();
+  } catch (...) {
+    throw interface::resource::utils::HttpServerException(
+        Poco::Net::HTTPResponse::HTTP_REASON_INTERNAL_SERVER_ERROR,
+        "Could not load data base.",
+        Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+  }
 }
 
 void DBService::saveDB() {
-  Poco::FileOutputStream fos(path_.toString());
-  Poco::JSON::Stringifier::condense(db, fos);
-  fos.close();
+  try {
+    Poco::FileOutputStream fos(path_.toString());
+    Poco::JSON::Stringifier::condense(db, fos);
+    fos.close();
+  } catch (...) {
+    throw interface::resource::utils::HttpServerException(
+        Poco::Net::HTTPResponse::HTTP_REASON_INTERNAL_SERVER_ERROR,
+        "Could not save data base.",
+        Poco::Net::HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+  }
 }
-
-// Poco::JSON::Array::Ptr DBService::findByStateGroup(std::string& state) {}
-// void DBService::addItem(Poco::JSON::Object::Ptr device) {
-//   device->set("id", db->size());
-//   db->add(device);
-//   saveDB();
-// }
-Poco::SharedPtr<Poco::JSON::Object> DBService::findItem(const std::string& id) {
-  for (auto it = db->begin(); it != db->end(); ++it) {
-    Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
-    if (json->getValue<std::string>("id") == id) {
-      return it->extract<Poco::JSON::Object::Ptr>();
+bool isAcceptable(
+    Poco::JSON::Object::Ptr json,
+    const std::vector<std::pair<std::string, std::string>>& params) {
+  for (auto itParam = params.begin(); itParam != params.end(); itParam++) {
+    try {
+      if (json->getValue<std::string>(itParam->first) != itParam->second) {
+        return false;
+      }
+    } catch (...) {
+      throw interface::resource::utils::HttpServerException(
+          Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST,
+          "Invalid parameter.", Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
     }
   }
-  throw interface::resource::utils::HttpServerException(
-      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
-      Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+  return true;
 }
-void DBService::addItem(Poco::JSON::Object::Ptr device) {
-  device->set("id", db->size());
+Poco::SharedPtr<Poco::JSON::Array> DBService::find(
+    const std::vector<std::pair<std::string, std::string>>& params) {
+  Poco::JSON::Array::Ptr dbArray = new Poco::JSON::Array();
+  for (auto it = db->begin(); it != db->end(); ++it) {
+    Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
+    if (isAcceptable(json, params)) {
+      dbArray->add(json);
+    }
+  }
+  if (dbArray->size() == 0) {
+    throw interface::resource::utils::HttpServerException(
+        Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
+        Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+  }
+  return dbArray;
+}
+void DBService::add(Poco::JSON::Object::Ptr device) {
+  device->set("id", std::to_string(db->size()));
   db->add(device);
   saveDB();
 }
-void DBService::updateItem(Poco::SharedPtr<Poco::JSON::Object> data,
-                           const std::string& id) {
+void DBService::update(
+    Poco::SharedPtr<Poco::JSON::Object> data,
+    const std::vector<std::pair<std::string, std::string>>& params) {
+  bool isFound = false;
   for (auto it = db->begin(); it != db->end(); ++it) {
     Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
-    if (json->getValue<std::string>("id") == id) {
+    if (isAcceptable(json, params)) {
+      isFound = true;
       for (auto it2 = data->begin(); it2 != data->end(); it2++) {
         json->set(it2->first, it2->second);
       }
-      saveDB();
-      return;
     }
   }
-  throw interface::resource::utils::HttpServerException(
-      Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
-      Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+  if (isFound) {
+    saveDB();
+  } else {
+    throw interface::resource::utils::HttpServerException(
+        Poco::Net::HTTPResponse::HTTP_REASON_BAD_REQUEST, "Item not found",
+        Poco::Net::HTTPResponse::HTTP_BAD_REQUEST);
+  }
 }
 
-void DBService::deleteItem(const std::string& id) {
+void DBService::remove(const std::string& id) {
+
   for (auto it = db->begin(); it != db->end(); ++it) {
     Poco::JSON::Object::Ptr json = it->extract<Poco::JSON::Object::Ptr>();
     if (json->getValue<std::string>("id") == id) {

@@ -1,5 +1,6 @@
 #include "server/resource/abstract_resource.h"
 
+#include <functional>
 #include <memory>
 
 #include "Poco/JSON/Parser.h"
@@ -14,9 +15,7 @@ namespace resource {
 
 using namespace Poco::Net;
 AbstractResource::AbstractResource() : baseUrl(), requestURI(), requestHost() {}
-AbstractResource::AbstractResource(
-    Poco::Path &path =
-        Poco::Path(Poco::Path::current()).append("db").append("devices.json"))
+AbstractResource::AbstractResource(Poco::Path &path)
     : baseUrl(),
       requestURI(),
       requestHost(),
@@ -24,28 +23,9 @@ AbstractResource::AbstractResource(
 
 AbstractResource::~AbstractResource() {}
 
-void AbstractResource::handleHttpHeaders(HTTPServerRequest &request,
-                                         HTTPServerResponse &response) {
-  response.setContentType("application/vnd.api+json; charset=utf-8");
-
-  if (request.getMethod() != HTTPRequest::HTTP_GET &&
-      request.getMethod() != HTTPRequest::HTTP_PUT &&
-      request.getMethod() != HTTPRequest::HTTP_POST &&
-      request.getMethod() != HTTPRequest::HTTP_DELETE &&
-      request.getMethod() != HTTPRequest::HTTP_OPTIONS) {
-    throw utils::HttpServerException(
-        "Not Implemented",
-        "The request method is not supported by the "
-        "server and cannot be handled.",
-        HTTPResponse::HTTP_NOT_IMPLEMENTED);
-  }
-}
-
 void AbstractResource::handleRequest(HTTPServerRequest &request,
                                      HTTPServerResponse &response) {
   try {
-    handleHttpHeaders(request, response);
-
     Poco::URI uri = Poco::URI(request.getURI());
 
     requestURI = request.getURI();
@@ -53,26 +33,17 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
     baseUrl = "http://" + requestHost + requestURI;
     queryStringParameters = uri.getQueryParameters();
 
-    if (request.getMethod() == HTTPRequest::HTTP_GET) {
-      this->handle_get(request, response);
-    }
+    if (handler_map.find(request.getMethod()) != handler_map.end()) {
+      std::invoke(handler_map[request.getMethod()], *this, request, response);
 
-    if (request.getMethod() == HTTPRequest::HTTP_PUT) {
-      this->handle_put(request, response);
+    } else {
+      response.setContentType("application/vnd.api+json; charset=utf-8");
+      throw utils::HttpServerException(
+          "Not Implemented",
+          "The request method is not supported by the "
+          "server and cannot be handled.",
+          HTTPResponse::HTTP_NOT_IMPLEMENTED);
     }
-
-    if (request.getMethod() == HTTPRequest::HTTP_POST) {
-      this->handle_post(request, response);
-    }
-
-    if (request.getMethod() == HTTPRequest::HTTP_DELETE) {
-      this->handle_delete(request, response);
-    }
-
-    if (request.getMethod() == HTTPRequest::HTTP_OPTIONS) {
-      this->handle_options(request, response);
-    }
-
   } catch (utils::HttpServerException &exception) {
     response.setStatusAndReason(exception.code());
 
@@ -90,38 +61,32 @@ void AbstractResource::handleRequest(HTTPServerRequest &request,
 
 void AbstractResource::handle_get(HTTPServerRequest &,
                                   HTTPServerResponse &response) {
-  Poco::Logger &logger = Poco::Logger::get("SmartHouseLogger");
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
-  std::ostream &errorStream = response.send();
-  errorStream.flush();
+  response.send();
 }
 
 void AbstractResource::handle_put(HTTPServerRequest &,
                                   HTTPServerResponse &response) {
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
-  std::ostream &errorStream = response.send();
-  errorStream.flush();
+  response.send();
 }
 
 void AbstractResource::handle_post(HTTPServerRequest &,
                                    HTTPServerResponse &response) {
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
-  std::ostream &errorStream = response.send();
-  errorStream.flush();
+  response.send();
 }
 
 void AbstractResource::handle_delete(HTTPServerRequest &,
                                      HTTPServerResponse &response) {
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
-  std::ostream &errorStream = response.send();
-  errorStream.flush();
+  response.send();
 }
 
 void AbstractResource::handle_options(HTTPServerRequest &,
                                       HTTPServerResponse &response) {
   response.setStatusAndReason(HTTPResponse::HTTP_METHOD_NOT_ALLOWED);
-  std::ostream &errorStream = response.send();
-  errorStream.flush();
+  response.send();
 }
 
 std::string AbstractResource::getUrl(const std::string &fragment) {

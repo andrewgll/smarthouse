@@ -21,6 +21,8 @@ class DeviceResource : public AbstractResource {
                      Poco::Net::HTTPServerResponse &) override;
   void handle_options(Poco::Net::HTTPServerRequest &,
                       Poco::Net::HTTPServerResponse &) override;
+  void handle_smoke();
+  void handle_flood();
 };
 
 }  // namespace resource
