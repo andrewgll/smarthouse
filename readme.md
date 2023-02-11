@@ -2,9 +2,13 @@
 
 # SmartHouse Server
 
-_Under development_
+_v 1.2_
 
 SmartHouse Server is a typical HTTP server, but for handling smart devices and sensors. Easy to install and maintain, you can register your devices, set statuses for them, etc.
+
+Default ports:
+- `8080` for main server
+- `8008` for startup server
 
 ## Installation process
 
@@ -13,13 +17,17 @@ You need following programs be installed:
 - Cmake
 - Conan pakage manager
 
-Linux:
+### Linux:
 
 - `./unix-install.sh` from root folder
 
-From Windows:
+### From Windows:
 
 - `./windows-install.cmd`
+
+_If you want to manage smarthouse server remotely you also need pyton3:_
+
+-  `python3 ./startupServer.py`
 
 ## API Documentation
 
@@ -85,8 +93,8 @@ Logs types:
 
 _we are using small python server for managing main server_
 
-Use port 8008 to manage main server
+Use port `8008` to manage main server
 
-- start _start main server_
-- stop _stop main server_
-- restore _restore db_
+- `start` _start main server_
+- `stop` _stop main server_
+- `restore` _restore db_
