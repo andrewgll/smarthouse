@@ -40,28 +40,28 @@ status - status of device by which you can control behavior of device
 
 ### Device list:
 
-- smokeSensor
+- `smokeSensor`
   possible status: _smokeNOTDetected, smokeDetected_ to activate event with smoke
-- waterSensor
+- `waterSensor`
   possible status: _floodNOTDetected. floddDetected_ to activate event with flood
-- window
+- `window`
   possible status: _open, closed_
-- light
+- `light`
   possible status: _off, on_
-- smartDevice
+- `smartDevice`
   possible status: _off, on_
-- oven
+- `oven`
   possible status: _off, on_
-- tap
+- `tap`
   possible status: _closed, opened_
-- garageDoors
+- `garageDoors`
   possible status: _closed, opened_
 
 ### Exampple:
 
 ### GET /device
 
-_all devices_
+_all devices in JSON_
 
 ### GET /device?id=0
 
