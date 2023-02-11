@@ -34,9 +34,9 @@ _If you want to manage smarthouse server remotely you also need pyton3:_
 - device
   _accept: GET, PUT, POST, DELETE, OPTIONS_
 
-id - get device by id
-name - name of device
-status - status of device by which you can control behavior of device
+- id - get device by id
+- name - name of device
+- status - status of device by which you can control behavior of device
 
 ### Device list:
 
