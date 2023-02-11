@@ -72,7 +72,7 @@ _device with id 0_
     "status": "smokeNOTDetected"
 }`
 
-### PUT /device
+### PUT /device?id=1
 
 _you can update any field of device except id_
 `{
