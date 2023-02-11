@@ -41,9 +41,9 @@ _If you want to manage smarthouse server remotely you also need pyton3:_
 ### Device list:
 
 - `smokeSensor`
-  possible status: _smokeNOTDetected, smokeDetected_ to activate event with smoke
+  possible status: _smokeNOTDetected, smokeDetected_ 
 - `waterSensor`
-  possible status: _floodNOTDetected. floddDetected_ to activate event with flood
+  possible status: _floodNOTDetected. flodoDetected_ 
 - `window`
   possible status: _open, closed_
 - `light`
